@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { getSocket } from "./socket";
 import type { Snapshot } from "@/types";
 
 export interface SwarmEvent {
-  id: string;
+  id: number;
   ts: number;
   kind:
     | "task_created"
@@ -15,6 +14,10 @@ export interface SwarmEvent {
     | "agent_created"
     | "agent_status_update";
   text: string;
+}
+
+interface ServerSnapshot extends Snapshot {
+  events: SwarmEvent[];
 }
 
 const empty: Snapshot = {
@@ -33,70 +36,60 @@ const empty: Snapshot = {
   },
 };
 
+const POLL_MS = 1200;
+
 export function useSwarm() {
   const [snapshot, setSnapshot] = useState<Snapshot>(empty);
   const [events, setEvents] = useState<SwarmEvent[]>([]);
   const [connected, setConnected] = useState(false);
-  const counter = useRef(0);
+  const seenEventId = useRef(0);
+  const aborted = useRef(false);
 
   useEffect(() => {
-    const s = getSocket();
-    const onConnect = () => setConnected(true);
-    const onDisconnect = () => setConnected(false);
-    const onSnapshot = (snap: Snapshot) => setSnapshot(snap);
-    const onState = (snap: Snapshot) => setSnapshot(snap);
+    aborted.current = false;
+    let timer: ReturnType<typeof setTimeout> | null = null;
 
-    function pushEvent(kind: SwarmEvent["kind"], text: string) {
-      counter.current += 1;
-      const id = `${Date.now()}-${counter.current}`;
-      setEvents((prev) =>
-        [{ id, ts: Date.now(), kind, text }, ...prev].slice(0, 80),
-      );
-    }
+    const tick = async () => {
+      try {
+        const res = await fetch("/api/state", { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = (await res.json()) as ServerSnapshot;
+        if (aborted.current) return;
 
-    const onTaskCreated = (t: any) =>
-      pushEvent("task_created", `task created — ${t.title}`);
-    const onTaskAssigned = (p: any) =>
-      pushEvent(
-        "task_assigned",
-        `${p.agent.name} ← ${p.task.title}`,
-      );
-    const onTaskStarted = (t: any) =>
-      pushEvent("task_started", `started ${t.title}`);
-    const onTaskCompleted = (t: any) =>
-      pushEvent(
-        "task_completed",
-        `${t.status === "failed" ? "failed" : "completed"} — ${t.title}`,
-      );
-    const onAgentCreated = (a: any) =>
-      pushEvent("agent_created", `agent online — ${a.name}`);
-    const onAgentStatus = (a: any) =>
-      pushEvent("agent_status_update", `${a.name} → ${a.status}`);
+        setConnected(true);
+        setSnapshot({
+          agents: data.agents,
+          tasks: data.tasks,
+          tools: data.tools,
+          stats: data.stats,
+        });
 
-    s.on("connect", onConnect);
-    s.on("disconnect", onDisconnect);
-    s.on("snapshot", onSnapshot);
-    s.on("state", onState);
-    s.on("task_created", onTaskCreated);
-    s.on("task_assigned", onTaskAssigned);
-    s.on("task_started", onTaskStarted);
-    s.on("task_completed", onTaskCompleted);
-    s.on("agent_created", onAgentCreated);
-    s.on("agent_status_update", onAgentStatus);
+        if (Array.isArray(data.events)) {
+          // Server returns events newest-first; merge new ones.
+          const fresh = data.events.filter((e) => e.id > seenEventId.current);
+          if (fresh.length > 0) {
+            seenEventId.current = Math.max(
+              seenEventId.current,
+              ...fresh.map((e) => e.id),
+            );
+            setEvents((prev) => {
+              // Newest first; cap to 80
+              const merged = [...fresh, ...prev];
+              return merged.slice(0, 80);
+            });
+          }
+        }
+      } catch {
+        if (!aborted.current) setConnected(false);
+      } finally {
+        if (!aborted.current) timer = setTimeout(tick, POLL_MS);
+      }
+    };
 
-    if (s.connected) setConnected(true);
-
+    tick();
     return () => {
-      s.off("connect", onConnect);
-      s.off("disconnect", onDisconnect);
-      s.off("snapshot", onSnapshot);
-      s.off("state", onState);
-      s.off("task_created", onTaskCreated);
-      s.off("task_assigned", onTaskAssigned);
-      s.off("task_started", onTaskStarted);
-      s.off("task_completed", onTaskCompleted);
-      s.off("agent_created", onAgentCreated);
-      s.off("agent_status_update", onAgentStatus);
+      aborted.current = true;
+      if (timer) clearTimeout(timer);
     };
   }, []);
 
