@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Octo Swarm",
-  description: "Decentralized agent coordination — MVP",
+  title: "Octo Swarm — Watch AI agents collaborate in real time",
+  description:
+    "A live, simulated network of AI agents that pick up jobs, work together, and deliver results.",
 };
 
 export default function RootLayout({
@@ -13,7 +14,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-bg text-slate-200 font-mono antialiased">
+      <body className="text-slate-200 font-sans antialiased min-h-screen">
         {children}
       </body>
     </html>
