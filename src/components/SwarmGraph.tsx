@@ -13,16 +13,16 @@ import "reactflow/dist/style.css";
 import type { Snapshot, Agent, Task } from "@/types";
 import { agentStatusLabel, agentTypeLabel, taskStatusLabel } from "@/lib/labels";
 
-const INK = "#1a1411";
-const PAPER = "#f1e7d1";
-const STAMP = "#b73a26";
-const DEEP = "#1f3a4d";
-const SAGE = "#4a6650";
-const GOLD = "#a78a3c";
-const RULE = "#b8a274";
+const INK = "#ede1c5";
+const PAPER = "#1a160f";
+const STAMP = "#e2553a";
+const DEEP = "#6da0c2";
+const SAGE = "#8fb595";
+const GOLD = "#d4b35a";
+const RULE = "#4a3f2c";
 
 function agentColor(a: Agent): string {
-  if (a.status === "offline") return "#8a7a5d";
+  if (a.status === "offline") return "#877657";
   if (a.status === "busy") return STAMP;
   return SAGE;
 }
@@ -150,7 +150,7 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
             <div
               style={{
                 fontSize: 11,
-                color: "rgba(26,20,17,0.6)",
+                color: "rgba(237,225,197,0.55)",
                 fontStyle: "italic",
                 marginTop: 2,
               }}
@@ -208,7 +208,7 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
                 style={{
                   marginLeft: "auto",
                   fontSize: 9,
-                  color: "rgba(26,20,17,0.5)",
+                  color: "rgba(237,225,197,0.45)",
                   letterSpacing: "0.18em",
                   textTransform: "uppercase",
                 }}
@@ -232,7 +232,7 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
               className="mono"
               style={{
                 fontSize: 10,
-                color: "rgba(26,20,17,0.55)",
+                color: "rgba(237,225,197,0.5)",
                 marginTop: 2,
               }}
             >
@@ -242,7 +242,7 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
             <div
               style={{
                 fontSize: 11,
-                color: "rgba(26,20,17,0.55)",
+                color: "rgba(237,225,197,0.5)",
                 fontStyle: "italic",
                 marginTop: 1,
               }}
@@ -301,7 +301,7 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
             <div
               style={{
                 fontSize: 11,
-                color: "rgba(26,20,17,0.55)",
+                color: "rgba(237,225,197,0.5)",
                 fontStyle: "italic",
                 marginTop: 3,
               }}
