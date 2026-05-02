@@ -3,94 +3,297 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
-  --grid-line: rgba(255, 255, 255, 0.04);
+  color-scheme: light;
+
+  --paper: #f1e7d1;
+  --paper-2: #e9ddc1;
+  --paper-shade: #d8c89e;
+  --ink: #1a1411;
+  --ink-soft: #3a2f25;
+  --ink-mute: #7a6a4f;
+  --rule: #b8a274;
+  --stamp: #b73a26;
+  --stamp-mute: #a13218;
+  --deep: #1f3a4d;
+  --gold: #a78a3c;
+  --sage: #4a6650;
 }
 
 html,
 body {
-  height: 100%;
-  background: #070912;
+  background: var(--paper);
+  color: var(--ink);
 }
 
 body {
-  background-image: radial-gradient(
-      ellipse 80% 50% at 50% -10%,
-      rgba(167, 139, 250, 0.12),
-      transparent 60%
+  font-family: var(--font-display), Georgia, serif;
+  font-feature-settings: "onum" 1, "ss01" 1, "kern" 1, "liga" 1;
+  font-variation-settings: "opsz" 14, "SOFT" 0, "WONK" 0;
+  background-color: var(--paper);
+  background-image:
+    /* sparse ink dots */
+    radial-gradient(
+      circle at 12% 18%,
+      rgba(26, 20, 17, 0.045) 0,
+      transparent 0.7px
     ),
     radial-gradient(
-      ellipse 60% 40% at 100% 100%,
-      rgba(34, 211, 238, 0.06),
-      transparent 60%
+      circle at 78% 62%,
+      rgba(26, 20, 17, 0.05) 0,
+      transparent 0.7px
     ),
-    linear-gradient(180deg, #070912 0%, #050710 100%);
-  background-attachment: fixed;
+    radial-gradient(
+      circle at 42% 88%,
+      rgba(26, 20, 17, 0.04) 0,
+      transparent 0.7px
+    ),
+    /* corner shading like aged paper */
+      radial-gradient(
+        120% 80% at 0% 0%,
+        rgba(216, 200, 158, 0.55) 0%,
+        rgba(216, 200, 158, 0) 35%
+      ),
+    radial-gradient(
+      120% 80% at 100% 100%,
+      rgba(167, 138, 60, 0.18) 0%,
+      transparent 40%
+    ),
+    /* subtle grain via repeating noise */
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.10  0 0 0 0 0.08  0 0 0 0 0.07  0 0 0 0.18 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.55'/></svg>");
+  background-attachment: fixed, fixed, fixed, fixed, fixed, fixed;
+  background-size: 220px 220px, 260px 260px, 300px 300px, 100% 100%, 100% 100%, 240px 240px;
+}
+
+::selection {
+  background: var(--stamp);
+  color: var(--paper);
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1d2334;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #262d40;
+  background: var(--rule);
+  border: 2px solid var(--paper);
+  border-radius: 0;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 
-/* ---- Reusable component classes ----------------------------------------- */
+/* ---- Component layer ----------------------------------------------------- */
 
 @layer components {
-  .card {
-    @apply rounded-xl border border-line bg-panel/70 backdrop-blur-sm shadow-soft;
+  .display {
+    font-family: var(--font-display), Georgia, serif;
+    font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 1;
+    letter-spacing: -0.02em;
+  }
+  .display-soft {
+    font-family: var(--font-display), Georgia, serif;
+    font-variation-settings: "opsz" 72, "SOFT" 50, "WONK" 0;
+  }
+  .small-caps {
+    font-family: var(--font-display), Georgia, serif;
+    font-variation-settings: "opsz" 14, "SOFT" 0, "WONK" 0;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    font-feature-settings: "smcp" 1;
+  }
+  .mono {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-feature-settings: "ss02" 1;
+  }
+  .ink-rule {
     background-image: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.02),
-      rgba(255, 255, 255, 0)
+      to right,
+      var(--ink) 0,
+      var(--ink) 50%,
+      transparent 50%,
+      transparent 100%
     );
+    background-size: 6px 1px;
+    background-repeat: repeat-x;
+    background-position: left center;
   }
-  .card-hover {
-    @apply transition-colors hover:border-line2;
+  .double-rule {
+    border-top: 1px solid var(--ink);
+    box-shadow: 0 3px 0 -2px var(--ink);
   }
-  .chip {
-    @apply text-[10px] px-1.5 py-0.5 rounded-md bg-panel2/80 border border-line text-slate-300;
+  .field {
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--ink);
+    padding: 4px 0 6px;
+    color: var(--ink);
+    font-family: var(--font-display), Georgia, serif;
+    font-size: 16px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s;
   }
-  .label {
-    @apply text-[10px] uppercase tracking-[0.18em] text-slate-400;
+  .field:focus {
+    border-bottom-color: var(--stamp);
+    box-shadow: 0 1px 0 0 var(--stamp);
   }
-  .h-section {
-    @apply text-xs uppercase tracking-[0.22em] text-slate-300 font-medium;
+  .field::placeholder {
+    color: var(--ink-mute);
+    font-style: italic;
   }
-  .btn {
-    @apply px-3 py-2 rounded-md text-sm font-medium transition-all
-      flex items-center justify-center gap-2 disabled:opacity-50
-      disabled:cursor-not-allowed select-none;
+
+  .btn-stamp {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 18px;
+    border: 1px solid var(--ink);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    transition: transform 0.15s ease, background 0.2s;
+    cursor: pointer;
   }
-  .btn-primary {
-    @apply btn bg-accent/15 hover:bg-accent/25 border border-accent/40
-      text-accent hover:shadow-glowAccent;
+  .btn-stamp:hover {
+    background: var(--stamp);
+    border-color: var(--stamp);
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 0 var(--ink);
   }
-  .btn-secondary {
-    @apply btn bg-accent2/15 hover:bg-accent2/25 border border-accent2/40
-      text-accent2 hover:shadow-glowAccent2;
+  .btn-stamp:active {
+    transform: translate(0, 0);
+    box-shadow: 1px 1px 0 0 var(--ink);
   }
-  .btn-ghost {
-    @apply btn bg-panel2/60 hover:bg-panel2 border border-line text-slate-300;
+  .btn-stamp:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
   }
-  .input {
-    @apply bg-panel2/80 border border-line rounded-md px-3 py-2 text-sm
-      text-slate-100 placeholder:text-slate-500
-      focus:outline-none focus:border-accent/60 focus:ring-2
-      focus:ring-accent/20 transition-colors;
+
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: transparent;
+    color: var(--ink);
+    padding: 8px 14px;
+    border: 1px solid var(--ink);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .btn-outline:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .stamp {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1.5px solid currentColor;
+    padding: 2px 8px 3px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    transform: rotate(-3deg);
+    background: transparent;
+  }
+  .stamp-double {
+    box-shadow:
+      inset 0 0 0 3px var(--paper),
+      inset 0 0 0 4.5px currentColor;
+  }
+  .stamp-stamp {
+    color: var(--stamp);
+    background: rgba(183, 58, 38, 0.06);
+  }
+  .stamp-deep {
+    color: var(--deep);
+    background: rgba(31, 58, 77, 0.05);
+  }
+  .stamp-ink {
+    color: var(--ink);
+    background: rgba(26, 20, 17, 0.06);
+  }
+  .stamp-sage {
+    color: var(--sage);
+    background: rgba(74, 102, 80, 0.07);
+  }
+  .stamp-gold {
+    color: var(--gold);
+    background: rgba(167, 138, 60, 0.08);
+  }
+
+  /* Roman numeral / ornament markers */
+  .marker {
+    font-family: var(--font-display);
+    font-variation-settings: "opsz" 60, "WONK" 1;
+    font-feature-settings: "smcp" 1, "onum" 1;
+    color: var(--stamp);
+  }
+
+  .ledger-row {
+    display: grid;
+    align-items: baseline;
+    border-bottom: 1px dotted var(--rule);
+    padding: 10px 0;
+  }
+
+  .panel {
+    background: var(--paper);
+    background-image:
+      radial-gradient(
+        110% 80% at 0% 0%,
+        rgba(216, 200, 158, 0.4) 0%,
+        rgba(216, 200, 158, 0) 50%
+      );
+    border: 1px solid var(--ink);
+    box-shadow:
+      4px 4px 0 -2px var(--ink),
+      0 0 0 1px var(--paper) inset;
+    position: relative;
+  }
+  .panel::after {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border: 1px dotted var(--rule);
+    pointer-events: none;
+  }
+  .panel-soft {
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    position: relative;
+  }
+  .panel-soft::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border: 1px solid var(--ink);
+    transform: translate(4px, 4px);
+    z-index: -1;
+    background: var(--paper-shade);
+  }
+
+  .typewriter::after {
+    content: "▌";
+    margin-left: 2px;
+    color: var(--ink);
+    animation: cursor 1.05s steps(2, end) infinite;
   }
 }
 
-/* ---- React Flow theming ------------------------------------------------- */
+/* ---- React Flow override ------------------------------------------------- */
 
 .react-flow {
   background: transparent;
@@ -100,37 +303,48 @@ body {
   background: transparent;
 }
 .react-flow__edge-path {
-  stroke-width: 1.5;
+  stroke-width: 1.4;
 }
 .react-flow__attribution {
   display: none;
 }
 .react-flow__controls {
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  background: rgba(15, 19, 32, 0.85) !important;
-  border-radius: 8px !important;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4) !important;
-  overflow: hidden;
+  background: var(--paper) !important;
+  border: 1px solid var(--ink) !important;
+  border-radius: 0 !important;
+  box-shadow: 3px 3px 0 0 var(--ink) !important;
 }
 .react-flow__controls-button {
-  background: transparent !important;
+  background: var(--paper) !important;
   border: none !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
-  color: #cbd5e1 !important;
-  width: 28px !important;
-  height: 28px !important;
+  border-bottom: 1px solid var(--ink) !important;
+  color: var(--ink) !important;
+  width: 26px !important;
+  height: 26px !important;
 }
 .react-flow__controls-button svg {
   fill: currentColor !important;
 }
-
-/* Edge animation enhancement */
 .react-flow__edge.animated path.react-flow__edge-path {
-  stroke-dasharray: 6 4;
-  animation: rf-dash 0.9s linear infinite;
+  stroke-dasharray: 5 4;
+  animation: rf-dash 1.3s linear infinite;
 }
 @keyframes rf-dash {
   to {
-    stroke-dashoffset: -20;
+    stroke-dashoffset: -18;
   }
 }
+
+/* Stagger reveal helper */
+.reveal > * {
+  opacity: 0;
+  animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.reveal > *:nth-child(1) { animation-delay: 60ms; }
+.reveal > *:nth-child(2) { animation-delay: 140ms; }
+.reveal > *:nth-child(3) { animation-delay: 220ms; }
+.reveal > *:nth-child(4) { animation-delay: 300ms; }
+.reveal > *:nth-child(5) { animation-delay: 380ms; }
+.reveal > *:nth-child(6) { animation-delay: 460ms; }
+.reveal > *:nth-child(7) { animation-delay: 540ms; }
+.reveal > *:nth-child(8) { animation-delay: 620ms; }

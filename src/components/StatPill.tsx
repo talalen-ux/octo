@@ -3,74 +3,103 @@
 import { motion, useMotionValue, animate } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
-type Tone = "default" | "ok" | "warn" | "err" | "accent" | "accent2";
+type Tone = "ink" | "stamp" | "deep" | "sage" | "gold";
 
-const toneStyles: Record<Tone, { ring: string; text: string; glow: string }> = {
-  default: { ring: "ring-line", text: "text-slate-100", glow: "" },
-  ok: { ring: "ring-ok/40", text: "text-ok", glow: "shadow-[0_0_20px_-8px_rgba(52,211,153,0.6)]" },
-  warn: { ring: "ring-warn/40", text: "text-warn", glow: "shadow-[0_0_20px_-8px_rgba(251,191,36,0.6)]" },
-  err: { ring: "ring-err/40", text: "text-err", glow: "shadow-[0_0_20px_-8px_rgba(248,113,113,0.6)]" },
-  accent: { ring: "ring-accent/40", text: "text-accent", glow: "shadow-[0_0_20px_-8px_rgba(167,139,250,0.7)]" },
-  accent2: { ring: "ring-accent2/40", text: "text-accent2", glow: "shadow-[0_0_20px_-8px_rgba(34,211,238,0.6)]" },
+const toneVar: Record<Tone, string> = {
+  ink: "var(--ink)",
+  stamp: "var(--stamp)",
+  deep: "var(--deep)",
+  sage: "var(--sage)",
+  gold: "var(--gold)",
 };
 
 function AnimatedNumber({ value }: { value: number }) {
   const mv = useMotionValue(value);
   const [display, setDisplay] = useState(value);
   useEffect(() => {
-    const controls = animate(mv, value, {
-      duration: 0.6,
-      ease: "easeOut",
+    const c = animate(mv, value, {
+      duration: 0.7,
+      ease: [0.2, 0.7, 0.2, 1],
       onUpdate: (v) => setDisplay(Math.round(v)),
     });
-    return controls.stop;
+    return c.stop;
   }, [value, mv]);
-  return <span className="tabular-nums">{display}</span>;
+  return (
+    <span
+      className="mono"
+      style={{
+        fontFeatureSettings: '"tnum" 1, "lnum" 1',
+        fontVariantNumeric: "tabular-nums",
+      }}
+    >
+      {display}
+    </span>
+  );
 }
 
 export default function StatPill({
   label,
   value,
-  tone = "default",
+  tone = "ink",
   hint,
-  icon,
+  numeral,
 }: {
   label: string;
   value: number | string;
   tone?: Tone;
   hint?: string;
-  icon?: React.ReactNode;
+  numeral?: string;
 }) {
-  const style = toneStyles[tone];
   const isNumber = typeof value === "number";
-  const prevRef = useRef<number | string>(value);
+  const prev = useRef<number | string>(value);
   const [pulse, setPulse] = useState(false);
 
   useEffect(() => {
-    if (prevRef.current !== value) {
+    if (prev.current !== value) {
       setPulse(true);
-      const t = setTimeout(() => setPulse(false), 500);
-      prevRef.current = value;
+      const t = setTimeout(() => setPulse(false), 700);
+      prev.current = value;
       return () => clearTimeout(t);
     }
   }, [value]);
 
   return (
     <motion.div
-      whileHover={{ y: -2 }}
-      animate={pulse ? { scale: [1, 1.04, 1] } : { scale: 1 }}
+      animate={pulse ? { y: [0, -2, 0] } : { y: 0 }}
       transition={{ duration: 0.4 }}
-      className={`relative overflow-hidden card card-hover px-3 py-3 ring-1 ${style.ring} ${pulse ? style.glow : ""}`}
+      className="relative px-1 py-3 border-l border-ink/40 first:border-l-0 first:pl-0"
     >
-      <div className="flex items-center justify-between gap-2">
-        <span className="label">{label}</span>
-        {icon && <span className={style.text}>{icon}</span>}
+      {numeral && (
+        <span
+          className="absolute right-2 top-1 mono small-caps text-[9px] text-inkMute"
+        >
+          {numeral}
+        </span>
+      )}
+      <div className="mono small-caps text-[9.5px] text-inkSoft mb-1">
+        {label}
       </div>
-      <div className={`mt-1 text-2xl font-semibold leading-tight ${style.text}`}>
+      <div
+        className="display leading-none"
+        style={{
+          fontVariationSettings: '"opsz" 144, "WONK" 1',
+          fontSize: 42,
+          color: toneVar[tone],
+          letterSpacing: "-0.02em",
+        }}
+      >
         {isNumber ? <AnimatedNumber value={value as number} /> : value}
       </div>
       {hint && (
-        <div className="mt-0.5 text-[10px] text-slate-500 truncate">{hint}</div>
+        <div className="mt-1.5 text-[11px] text-inkMute italic leading-snug">
+          {hint}
+        </div>
+      )}
+      {pulse && (
+        <span
+          aria-hidden
+          className="pointer-events-none absolute -top-1 -right-1 w-2 h-2 rounded-full bg-stamp animate-ripple"
+        />
       )}
     </motion.div>
   );

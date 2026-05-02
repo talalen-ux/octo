@@ -3,10 +3,9 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { api } from "@/lib/api";
-import Icon from "./Icon";
 import { agentTypeBlurb, agentTypeLabel } from "@/lib/labels";
 
-const SKILL_PALETTE = [
+const SKILLS = [
   "analysis",
   "data",
   "email",
@@ -28,14 +27,12 @@ export default function CreateAgentForm() {
   const [type, setType] = useState<"research" | "executor" | "router">(
     "research",
   );
-  const [skillsList, setSkillsList] = useState<string[]>([]);
+  const [skills, setSkills] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
-  function toggleSkill(s: string) {
-    setSkillsList((prev) =>
-      prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s],
-    );
+  function toggle(s: string) {
+    setSkills((p) => (p.includes(s) ? p.filter((x) => x !== s) : [...p, s]));
   }
 
   async function submit(e: React.FormEvent) {
@@ -45,67 +42,79 @@ export default function CreateAgentForm() {
     try {
       await api("/api/agents", {
         method: "POST",
-        body: JSON.stringify({ name, type, skills: skillsList }),
+        body: JSON.stringify({ name, type, skills }),
       });
       setName("");
-      setSkillsList([]);
-    } catch (e: any) {
-      setErr(e.message || "Could not spawn agent");
+      setSkills([]);
+    } catch (ex: any) {
+      setErr(ex.message || "Could not enlist the agent");
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-3">
-      <div className="flex flex-col gap-1">
-        <label className="label">Agent name</label>
+    <form onSubmit={submit} className="flex flex-col gap-5">
+      <label className="block">
+        <span className="mono small-caps text-[9.5px] text-inkMute">
+          Agent name
+        </span>
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="leave blank for a random name"
-          className="input"
+          placeholder="(leave blank for a number)"
+          className="field mt-1"
         />
-      </div>
+      </label>
 
-      <div className="flex flex-col gap-1.5">
-        <label className="label">Role</label>
-        <div className="grid grid-cols-3 gap-1.5">
-          {TYPES.map((t) => (
-            <motion.button
-              whileTap={{ scale: 0.96 }}
-              type="button"
-              key={t}
-              onClick={() => setType(t)}
-              className={`text-[11px] px-2 py-1.5 rounded-md border transition-colors capitalize text-center ${
-                type === t
-                  ? "border-accent2/60 bg-accent2/15 text-accent2"
-                  : "border-line bg-panel2/60 text-slate-400 hover:text-slate-200 hover:border-line2"
-              }`}
-            >
-              {agentTypeLabel[t]}
-            </motion.button>
-          ))}
+      <div>
+        <span className="mono small-caps text-[9.5px] text-inkMute">Role</span>
+        <div className="mt-2 grid grid-cols-3 gap-1.5">
+          {TYPES.map((t) => {
+            const on = type === t;
+            return (
+              <motion.button
+                whileTap={{ scale: 0.96 }}
+                type="button"
+                key={t}
+                onClick={() => setType(t)}
+                className="mono text-[10.5px] tracking-[0.18em] uppercase px-2 py-2 text-center transition-all"
+                style={{
+                  border: "1px solid var(--ink)",
+                  background: on ? "var(--ink)" : "transparent",
+                  color: on ? "var(--paper)" : "var(--ink)",
+                }}
+              >
+                {agentTypeLabel[t]}
+              </motion.button>
+            );
+          })}
         </div>
-        <p className="text-[10px] text-slate-500">{agentTypeBlurb[type]}</p>
+        <p className="mt-1.5 text-[11px] text-inkSoft italic">
+          {agentTypeBlurb[type]}
+        </p>
       </div>
 
-      <div className="flex flex-col gap-1.5">
-        <label className="label">Skills</label>
-        <div className="flex flex-wrap gap-1.5">
-          {SKILL_PALETTE.map((s) => {
-            const active = skillsList.includes(s);
+      <div>
+        <span className="mono small-caps text-[9.5px] text-inkMute">
+          Skills
+        </span>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {SKILLS.map((s) => {
+            const on = skills.includes(s);
             return (
               <motion.button
                 whileTap={{ scale: 0.94 }}
                 type="button"
                 key={s}
-                onClick={() => toggleSkill(s)}
-                className={`text-[11px] px-2 py-1 rounded-md border transition-colors capitalize ${
-                  active
-                    ? "border-accent2/60 bg-accent2/15 text-accent2"
-                    : "border-line bg-panel2/60 text-slate-400 hover:text-slate-200 hover:border-line2"
-                }`}
+                onClick={() => toggle(s)}
+                className="mono text-[10.5px] tracking-[0.16em] uppercase px-2 py-1"
+                style={{
+                  border: "1px solid var(--ink)",
+                  background: on ? "var(--stamp)" : "transparent",
+                  color: on ? "var(--paper)" : "var(--ink)",
+                  borderColor: on ? "var(--stamp)" : "var(--ink)",
+                }}
               >
                 {s}
               </motion.button>
@@ -118,21 +127,15 @@ export default function CreateAgentForm() {
         <motion.div
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-[11px] text-err flex items-center gap-1"
+          className="text-[12px] text-stamp italic"
         >
-          <Icon name="warning" size={11} /> {err}
+          ✕ {err}
         </motion.div>
       )}
 
-      <motion.button
-        whileTap={{ scale: 0.97 }}
-        type="submit"
-        disabled={busy}
-        className="btn-secondary"
-      >
-        <Icon name="plus" size={14} />
-        {busy ? "Spawning…" : "Add agent to swarm"}
-      </motion.button>
+      <button type="submit" disabled={busy} className="btn-stamp">
+        {busy ? "Enlisting…" : "Enlist agent"}
+      </button>
     </form>
   );
 }

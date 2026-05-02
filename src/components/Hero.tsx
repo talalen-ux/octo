@@ -1,64 +1,92 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Icon from "./Icon";
+
+function todayString() {
+  return new Date().toLocaleDateString(undefined, {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
 
 export default function Hero({ connected }: { connected: boolean }) {
   return (
-    <header className="relative px-6 sm:px-8 pt-7 pb-5 border-b border-line/70 overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 bg-grid-fade" />
-      <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="flex flex-col gap-1.5 max-w-xl">
-          <div className="flex items-center gap-2">
-            <span className="relative inline-flex w-2 h-2">
-              <span className="absolute inset-0 rounded-full bg-accent" />
-              <span className="absolute inset-0 rounded-full bg-accent/60 animate-pulseRing" />
-            </span>
-            <span className="text-[10px] uppercase tracking-[0.4em] text-slate-400">
-              Octo Swarm
-            </span>
-          </div>
-          <motion.h1
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-2xl sm:text-3xl font-semibold tracking-tight text-slate-100"
+    <header className="relative px-6 sm:px-10 pt-10 pb-6 border-b border-ink">
+      {/* Top rule with edition mark */}
+      <div className="flex items-center justify-between text-[10px] mono small-caps text-inkSoft mb-6">
+        <span>No. 001 — Operations Edition</span>
+        <span suppressHydrationWarning>{todayString()}</span>
+        <span className="flex items-center gap-2">
+          <span
+            className={`relative inline-flex w-2.5 h-2.5 ${
+              connected ? "" : "opacity-40"
+            }`}
           >
-            A live network of AI agents{" "}
-            <span className="bg-gradient-to-r from-accent via-accent2 to-accent bg-clip-text text-transparent">
-              working together
-            </span>
-            .
+            <span
+              className={`absolute inset-0 rounded-full ${
+                connected ? "bg-stamp" : "bg-inkMute"
+              }`}
+            />
+            {connected && (
+              <span className="absolute inset-0 rounded-full bg-stamp animate-ripple" />
+            )}
+          </span>
+          {connected ? "Wire open" : "Wire closed"}
+        </span>
+      </div>
+
+      {/* Masthead */}
+      <div className="grid grid-cols-12 gap-6 items-end">
+        <div className="col-span-12 md:col-span-9">
+          <motion.h1
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.2, 0.7, 0.2, 1] }}
+            className="display leading-[0.92] text-ink"
+            style={{
+              fontVariationSettings: '"opsz" 144, "WONK" 1, "SOFT" 0',
+              fontSize: "clamp(48px, 9vw, 132px)",
+              fontWeight: 600,
+              letterSpacing: "-0.035em",
+            }}
+          >
+            Octo<span className="italic" style={{ color: "var(--stamp)" }}>·</span>Swarm
           </motion.h1>
           <motion.p
-            initial={{ opacity: 0, y: 4 }}
+            initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-sm text-slate-400 leading-relaxed"
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="mt-3 max-w-2xl text-[19px] leading-snug text-inkSoft"
+            style={{
+              fontVariationSettings: '"opsz" 24, "SOFT" 30',
+            }}
           >
-            Send a task. Watch agents pick it up, collaborate with tools, and
-            deliver the result — all in real time.
+            <span className="italic">A live ledger of an autonomous agent fleet.</span>
+            {" "}
+            Tasks are dispatched, picked up by available hands, and resolved with
+            the tools at port — every move recorded as it happens.
           </motion.p>
         </div>
 
-        <div className="flex flex-col items-end gap-2">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.45 }}
+          className="col-span-12 md:col-span-3 flex md:justify-end"
+        >
           <div
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-[11px] ${
-              connected
-                ? "border-ok/40 bg-ok/10 text-ok"
-                : "border-err/40 bg-err/10 text-err"
-            }`}
+            className="stamp stamp-double stamp-stamp animate-stamp"
+            style={{ animationDelay: "500ms" }}
           >
-            <Icon name="wifi" size={12} />
-            <span className="uppercase tracking-widest font-medium">
-              {connected ? "Swarm live" : "Reconnecting"}
-            </span>
+            <span>Field Bulletin</span>
           </div>
-          <div className="text-[10px] text-slate-500 uppercase tracking-widest">
-            simulation · pluggable tools · mvp
-          </div>
-        </div>
+        </motion.div>
       </div>
+
+      {/* Bottom double rule */}
+      <div className="mt-8 double-rule origin-left animate-rule" />
     </header>
   );
 }

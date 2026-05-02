@@ -5,78 +5,82 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: "#070912",
-        bg2: "#0a0d18",
-        panel: "#0f1320",
-        panel2: "#141a2a",
-        line: "#1d2334",
-        line2: "#262d40",
-        accent: "#a78bfa",
-        accent2: "#22d3ee",
-        ok: "#34d399",
-        warn: "#fbbf24",
-        err: "#f87171",
+        paper: "var(--paper)",
+        paper2: "var(--paper-2)",
+        paperShade: "var(--paper-shade)",
+        ink: "var(--ink)",
+        inkSoft: "var(--ink-soft)",
+        inkMute: "var(--ink-mute)",
+        rule: "var(--rule)",
+        stamp: "var(--stamp)",
+        stampMute: "var(--stamp-mute)",
+        deep: "var(--deep)",
+        gold: "var(--gold)",
+        sage: "var(--sage)",
       },
       fontFamily: {
-        sans: [
-          "ui-sans-serif",
-          "system-ui",
-          "-apple-system",
-          "BlinkMacSystemFont",
-          "Segoe UI",
-          "Roboto",
-          "Inter",
-          "sans-serif",
-        ],
-        mono: [
-          "ui-monospace",
-          "SFMono-Regular",
-          "Menlo",
-          "Monaco",
-          "Consolas",
-          "monospace",
-        ],
+        display: ["var(--font-display)", "Georgia", "serif"],
+        serif: ["var(--font-display)", "Georgia", "serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
-      backgroundImage: {
-        "grid-fade":
-          "radial-gradient(circle at 50% 0%, rgba(167,139,250,0.10), transparent 55%), radial-gradient(circle at 90% 90%, rgba(34,211,238,0.06), transparent 50%)",
-        "panel-shine":
-          "linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0))",
-      },
-      boxShadow: {
-        soft: "0 1px 0 rgba(255,255,255,0.03) inset, 0 8px 24px rgba(0,0,0,0.35)",
-        glowAccent: "0 0 0 1px rgba(167,139,250,0.35), 0 0 28px rgba(167,139,250,0.25)",
-        glowAccent2:
-          "0 0 0 1px rgba(34,211,238,0.35), 0 0 24px rgba(34,211,238,0.18)",
+      fontFeatureSettings: {
+        oldstyle: '"onum", "ss01"',
       },
       keyframes: {
-        pulseRing: {
-          "0%": { transform: "scale(0.85)", opacity: "0.7" },
-          "100%": { transform: "scale(1.8)", opacity: "0" },
+        rise: {
+          "0%": { opacity: "0", transform: "translateY(8px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
         },
-        sheen: {
-          "0%": { transform: "translateX(-120%)" },
-          "100%": { transform: "translateX(120%)" },
+        sweep: {
+          "0%": { clipPath: "inset(0 100% 0 0)" },
+          "100%": { clipPath: "inset(0 0 0 0)" },
         },
-        floaty: {
-          "0%,100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-3px)" },
+        rule: {
+          "0%": { transform: "scaleX(0)" },
+          "100%": { transform: "scaleX(1)" },
         },
-        shimmer: {
-          "0%": { backgroundPosition: "-200% 0" },
-          "100%": { backgroundPosition: "200% 0" },
+        stamp: {
+          "0%": {
+            opacity: "0",
+            transform: "rotate(-14deg) scale(1.4)",
+          },
+          "55%": {
+            opacity: "1",
+            transform: "rotate(-9deg) scale(0.92)",
+          },
+          "75%": {
+            transform: "rotate(-7deg) scale(1.04)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "rotate(-7deg) scale(1)",
+          },
         },
-        breathe: {
-          "0%,100%": { opacity: "0.55" },
-          "50%": { opacity: "1" },
+        cursor: {
+          "0%, 49%": { opacity: "1" },
+          "50%, 100%": { opacity: "0" },
+        },
+        ripple: {
+          "0%": { transform: "scale(0.8)", opacity: "0.6" },
+          "100%": { transform: "scale(2.4)", opacity: "0" },
+        },
+        drift: {
+          "0%, 100%": { transform: "translate(0,0)" },
+          "50%": { transform: "translate(0, -2px)" },
+        },
+        ink: {
+          "0%": { strokeDashoffset: "var(--len, 200)" },
+          "100%": { strokeDashoffset: "0" },
         },
       },
       animation: {
-        pulseRing: "pulseRing 1.6s cubic-bezier(0.4,0,0.6,1) infinite",
-        sheen: "sheen 2.4s ease-in-out infinite",
-        floaty: "floaty 4s ease-in-out infinite",
-        shimmer: "shimmer 2.4s linear infinite",
-        breathe: "breathe 2.6s ease-in-out infinite",
+        rise: "rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both",
+        sweep: "sweep 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both",
+        rule: "rule 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both",
+        stamp: "stamp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both",
+        cursor: "cursor 1.05s steps(2, end) infinite",
+        ripple: "ripple 1.6s cubic-bezier(0.4,0,0.6,1) infinite",
+        drift: "drift 5s ease-in-out infinite",
       },
     },
   },

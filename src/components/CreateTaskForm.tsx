@@ -3,17 +3,16 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { api } from "@/lib/api";
-import Icon from "./Icon";
 
-const SUGGESTED_TASKS = [
+const SUGGESTED = [
   {
     title: "Find best ETH liquidity pools",
     description: "Survey the top yield opportunities across L2s.",
     skills: ["analysis", "data"],
   },
   {
-    title: "Send intro emails to partner agents",
-    description: "Reach out to peer agents with a short intro.",
+    title: "Send intro to partner agents",
+    description: "Reach out with a short intro line.",
     skills: ["email", "outreach"],
   },
   {
@@ -28,7 +27,7 @@ const SUGGESTED_TASKS = [
   },
 ];
 
-const SKILL_PALETTE = [
+const SKILLS = [
   "analysis",
   "data",
   "email",
@@ -42,30 +41,23 @@ const SKILL_PALETTE = [
 export default function CreateTaskForm() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [skillsList, setSkillsList] = useState<string[]>([]);
+  const [skills, setSkills] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
-  function toggleSkill(s: string) {
-    setSkillsList((prev) =>
-      prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s],
-    );
+  function toggle(s: string) {
+    setSkills((p) => (p.includes(s) ? p.filter((x) => x !== s) : [...p, s]));
   }
-
   function loadExample() {
-    const ex = SUGGESTED_TASKS[Math.floor(Math.random() * SUGGESTED_TASKS.length)];
+    const ex = SUGGESTED[Math.floor(Math.random() * SUGGESTED.length)];
     setTitle(ex.title);
     setDescription(ex.description);
-    setSkillsList(ex.skills);
+    setSkills(ex.skills);
   }
-
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setErr(null);
-    if (!title.trim()) {
-      setErr("Give your task a short title.");
-      return;
-    }
+    if (!title.trim()) return setErr("A title is required.");
     setBusy(true);
     try {
       await api("/api/tasks", {
@@ -73,66 +65,73 @@ export default function CreateTaskForm() {
         body: JSON.stringify({
           title,
           description,
-          requiredSkills: skillsList,
+          requiredSkills: skills,
         }),
       });
       setTitle("");
       setDescription("");
-      setSkillsList([]);
-    } catch (e: any) {
-      setErr(e.message || "Could not send task");
+      setSkills([]);
+    } catch (ex: any) {
+      setErr(ex.message || "Could not file the order");
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-3">
-      <div className="flex flex-col gap-1">
-        <label className="label">What needs doing?</label>
+    <form onSubmit={submit} className="flex flex-col gap-5">
+      <label className="block">
+        <span className="mono small-caps text-[9.5px] text-inkMute">
+          Order title
+        </span>
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="e.g. Find best ETH liquidity pools"
-          className="input"
+          placeholder="Find the best ETH liquidity pools"
+          className="field mt-1"
         />
-      </div>
+      </label>
 
-      <div className="flex flex-col gap-1">
-        <label className="label">Details (optional)</label>
+      <label className="block">
+        <span className="mono small-caps text-[9.5px] text-inkMute">
+          Particulars
+        </span>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="A sentence or two of context"
+          placeholder="A sentence or two of context, if needed."
           rows={2}
-          className="input resize-none"
+          className="field mt-1 resize-none"
         />
-      </div>
+      </label>
 
-      <div className="flex flex-col gap-1.5">
-        <label className="label">Skills needed</label>
-        <div className="flex flex-wrap gap-1.5">
-          {SKILL_PALETTE.map((s) => {
-            const active = skillsList.includes(s);
+      <div>
+        <span className="mono small-caps text-[9.5px] text-inkMute">
+          Skills required
+        </span>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {SKILLS.map((s) => {
+            const on = skills.includes(s);
             return (
               <motion.button
                 whileTap={{ scale: 0.94 }}
-                type="button"
                 key={s}
-                onClick={() => toggleSkill(s)}
-                className={`text-[11px] px-2 py-1 rounded-md border transition-colors capitalize ${
-                  active
-                    ? "border-accent/60 bg-accent/15 text-accent"
-                    : "border-line bg-panel2/60 text-slate-400 hover:text-slate-200 hover:border-line2"
-                }`}
+                type="button"
+                onClick={() => toggle(s)}
+                className="mono text-[10.5px] tracking-[0.16em] uppercase px-2 py-1 transition-all"
+                style={{
+                  border: "1px solid var(--ink)",
+                  background: on ? "var(--ink)" : "transparent",
+                  color: on ? "var(--paper)" : "var(--ink)",
+                }}
               >
                 {s}
               </motion.button>
             );
           })}
         </div>
-        <p className="text-[10px] text-slate-500 mt-0.5">
-          The swarm picks the best agent that has these skills.
+        <p className="mt-1.5 text-[11px] text-inkMute italic">
+          The Quartermaster routes by skill match.
         </p>
       </div>
 
@@ -140,29 +139,23 @@ export default function CreateTaskForm() {
         <motion.div
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-[11px] text-err flex items-center gap-1"
+          className="text-[12px] text-stamp italic"
         >
-          <Icon name="warning" size={11} /> {err}
+          ✕ {err}
         </motion.div>
       )}
 
-      <div className="flex gap-2">
-        <motion.button
-          whileTap={{ scale: 0.97 }}
-          type="submit"
-          disabled={busy}
-          className="btn-primary flex-1"
-        >
-          <Icon name="send" size={14} />
-          {busy ? "Sending…" : "Send to swarm"}
-        </motion.button>
+      <div className="flex items-center gap-2 pt-1">
+        <button type="submit" disabled={busy} className="btn-stamp">
+          {busy ? "Filing…" : "Lodge order"}
+        </button>
         <button
           type="button"
           onClick={loadExample}
-          className="btn-ghost"
-          title="Fill with an example"
+          className="btn-outline"
+          title="Insert a sample order"
         >
-          <Icon name="lightning" size={14} />
+          Sample
         </button>
       </div>
     </form>

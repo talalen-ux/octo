@@ -3,14 +3,23 @@
 import { motion } from "framer-motion";
 import type { Agent, Task } from "@/types";
 import {
-  agentStatusDot,
   agentStatusLabel,
-  agentStatusTone,
   agentTypeBlurb,
   agentTypeLabel,
   shortId,
 } from "@/lib/labels";
-import Icon from "./Icon";
+
+const STATUS_DOT: Record<string, string> = {
+  idle: "var(--sage)",
+  busy: "var(--stamp)",
+  offline: "var(--ink-mute)",
+};
+
+const STATUS_STAMP: Record<string, string> = {
+  idle: "stamp stamp-sage",
+  busy: "stamp stamp-stamp",
+  offline: "stamp stamp-ink",
+};
 
 export default function AgentCard({
   agent,
@@ -19,77 +28,80 @@ export default function AgentCard({
   agent: Agent;
   current?: Task | null;
 }) {
-  const isBusy = agent.status === "busy";
+  const onDuty = agent.status === "busy";
   return (
-    <motion.div
+    <motion.article
       layout
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -1 }}
-      className="card card-hover p-3 flex flex-col gap-2 relative overflow-hidden"
+      initial={{ opacity: 0, x: -8 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.45, ease: [0.2, 0.7, 0.2, 1] }}
+      className="relative pl-4 pr-3 py-3 border-b border-rule"
     >
-      {isBusy && (
-        <span className="pointer-events-none absolute -inset-px rounded-xl ring-1 ring-warn/30 animate-breathe" />
-      )}
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="relative inline-flex w-2.5 h-2.5 shrink-0">
-            <span
-              className={`absolute inset-0 rounded-full ${agentStatusDot[agent.status]}`}
-            />
-            {isBusy && (
-              <span className="absolute inset-0 rounded-full bg-warn/70 animate-pulseRing" />
-            )}
-          </span>
-          <span className="font-semibold truncate text-slate-100">
-            {agent.name}
-          </span>
-        </div>
-        <span
-          className={`text-[10px] uppercase tracking-widest font-medium ${agentStatusTone[agent.status]}`}
+      {/* left rule with status dot */}
+      <span
+        className="absolute left-0 top-3 bottom-3 w-px"
+        style={{ background: STATUS_DOT[agent.status] }}
+      />
+      <div className="absolute -left-[3px] top-3.5 w-[7px] h-[7px] rounded-full"
+        style={{ background: STATUS_DOT[agent.status] }}>
+        {onDuty && (
+          <span
+            className="absolute inset-0 rounded-full animate-ripple"
+            style={{ background: "var(--stamp)" }}
+          />
+        )}
+      </div>
+
+      <div className="flex items-baseline justify-between gap-2">
+        <h4
+          className="display truncate"
+          style={{
+            fontVariationSettings: '"opsz" 24, "WONK" 1',
+            fontSize: 19,
+            fontWeight: 500,
+          }}
         >
+          {agent.name}
+        </h4>
+        <span className="mono small-caps text-[9px] text-inkMute shrink-0">
+          № {shortId(agent.id)}
+        </span>
+      </div>
+
+      <div className="mt-0.5 flex items-baseline gap-2 text-[12px] text-inkSoft italic">
+        <span title={agentTypeBlurb[agent.type]}>
+          {agentTypeLabel[agent.type]}
+        </span>
+        <span className="text-inkMute">·</span>
+        <span className={STATUS_STAMP[agent.status]}>
           {agentStatusLabel[agent.status]}
         </span>
       </div>
 
-      <div className="flex items-center justify-between text-[11px] text-slate-500">
-        <span title={agentTypeBlurb[agent.type]} className="text-slate-400">
-          {agentTypeLabel[agent.type]}
-        </span>
-        <span>#{shortId(agent.id)}</span>
-      </div>
-
-      <div className="flex flex-wrap gap-1">
-        {agent.skills.length === 0 && (
-          <span className="text-[10px] text-slate-500 italic">
-            no skills set
+      {agent.skills.length > 0 && (
+        <div className="mt-2 text-[12px] text-inkSoft leading-snug">
+          <span className="mono small-caps text-[9px] text-inkMute mr-1.5">
+            skills
           </span>
-        )}
-        {agent.skills.map((s) => (
-          <span key={s} className="chip capitalize">
-            {s}
+          <span className="italic capitalize">
+            {agent.skills.join(", ")}
           </span>
-        ))}
-      </div>
+        </div>
+      )}
 
-      <div className="flex items-center gap-3 text-[11px] text-slate-400 pt-1">
-        <span
-          className="flex items-center gap-1"
-          title="Trust score earned through completed work"
-        >
-          <Icon name="spark" size={11} className="text-accent2" />
-          <span className="text-slate-300">
+      <div className="mt-2 flex items-center gap-4 mono text-[10.5px] text-inkSoft">
+        <span>
+          <span className="text-inkMute">trust </span>
+          <span style={{ fontVariantNumeric: "tabular-nums" }}>
             {Math.round(agent.reputation * 100)}
           </span>
-          <span className="text-slate-500">trust</span>
         </span>
-        <span
-          className="flex items-center gap-1"
-          title="Tasks delivered"
-        >
-          <Icon name="check" size={11} className="text-ok" />
-          <span className="text-slate-300">{agent.completedCount}</span>
-          <span className="text-slate-500">done</span>
+        <span>
+          <span className="text-inkMute">filed </span>
+          <span style={{ fontVariantNumeric: "tabular-nums" }}>
+            {agent.completedCount}
+          </span>
         </span>
       </div>
 
@@ -98,18 +110,14 @@ export default function AgentCard({
           layout
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="mt-1 pt-2 border-t border-line/70 flex items-center gap-2"
+          className="mt-2 pt-2 border-t border-dotted border-rule text-[12px] text-ink leading-snug"
         >
-          <span className="relative w-1.5 h-1.5">
-            <span className="absolute inset-0 rounded-full bg-accent" />
-            <span className="absolute inset-0 rounded-full bg-accent/70 animate-pulseRing" />
+          <span className="mono small-caps text-[9px] text-stamp mr-2">
+            now
           </span>
-          <span className="text-[11px] text-slate-300 truncate">
-            <span className="text-slate-500">working on </span>
-            {current.title}
-          </span>
+          <span className="italic">{current.title}</span>
         </motion.div>
       )}
-    </motion.div>
+    </motion.article>
   );
 }

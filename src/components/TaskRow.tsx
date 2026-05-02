@@ -1,43 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import type { Agent, Task } from "@/types";
 import {
   relativeTime,
   summarizeResult,
+  taskStampClass,
   taskStatusLabel,
-  taskStatusTone,
 } from "@/lib/labels";
-import Icon from "./Icon";
-import { useEffect, useState } from "react";
 
-function StatusBadge({ status }: { status: Task["status"] }) {
-  const tone = taskStatusTone[status];
-  const showDot =
-    status === "queued" || status === "assigned" || status === "in_progress";
-  return (
-    <span
-      className={`inline-flex items-center gap-1 text-[10px] uppercase tracking-widest px-1.5 py-0.5 rounded-md border ${tone.border} ${tone.text} ${tone.bg}`}
-    >
-      {showDot && (
-        <span
-          className={`inline-block w-1.5 h-1.5 rounded-full ${
-            status === "queued"
-              ? "bg-slate-400"
-              : status === "assigned"
-                ? "bg-accent2"
-                : "bg-accent animate-pulse"
-          }`}
-        />
-      )}
-      {status === "completed" && <Icon name="check" size={10} />}
-      {status === "failed" && <Icon name="warning" size={10} />}
-      {taskStatusLabel[status]}
-    </span>
-  );
-}
-
-function ProgressBar({
+function ProgressInk({
   startedAt,
   duration = 5000,
 }: {
@@ -49,23 +22,25 @@ function ProgressBar({
     let raf = 0;
     const tick = () => {
       const elapsed = Date.now() - startedAt;
-      const next = Math.min(95, (elapsed / duration) * 100);
-      setPct(next);
+      setPct(Math.min(96, (elapsed / duration) * 100));
       raf = requestAnimationFrame(tick);
     };
     tick();
     return () => cancelAnimationFrame(raf);
   }, [startedAt, duration]);
   return (
-    <div className="h-1 bg-line/60 rounded-full overflow-hidden">
-      <motion.div
-        className="h-full bg-gradient-to-r from-accent via-accent2 to-accent"
+    <div className="h-[3px] mt-2 relative">
+      <div
+        className="absolute inset-y-0 left-0 right-0 ink-rule opacity-50"
+        aria-hidden
+      />
+      <div
+        className="absolute inset-y-0 left-0 transition-[width]"
         style={{
-          backgroundSize: "200% 100%",
           width: `${pct}%`,
+          background: "var(--stamp)",
+          boxShadow: "0 0 0 1px var(--stamp)",
         }}
-        animate={{ backgroundPosition: ["0% 0%", "200% 0%"] }}
-        transition={{ duration: 1.6, repeat: Infinity, ease: "linear" }}
       />
     </div>
   );
@@ -74,72 +49,100 @@ function ProgressBar({
 export default function TaskRow({
   task,
   agent,
+  index,
 }: {
   task: Task;
   agent?: Agent | null;
+  index?: number;
 }) {
-  const tone = taskStatusTone[task.status];
+  const isFinal = task.status === "completed" || task.status === "failed";
+
   return (
-    <motion.div
+    <motion.article
       layout
-      initial={{ opacity: 0, y: 6, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -4 }}
-      whileHover={{ y: -1 }}
-      transition={{ type: "spring", stiffness: 240, damping: 24 }}
-      className={`card card-hover px-3 py-2.5 border ${tone.border}`}
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, x: -6 }}
+      transition={{ type: "spring", stiffness: 220, damping: 26 }}
+      className="relative grid grid-cols-[28px_1fr] gap-2 pb-3 mb-3 border-b border-rule last:border-b-0"
     >
-      <div className="flex items-start justify-between gap-2">
-        <span className="font-medium text-slate-100 truncate">
-          {task.title}
+      {typeof index === "number" && (
+        <span
+          className="mono small-caps text-[10px] text-inkMute pt-[3px]"
+          style={{ fontVariantNumeric: "tabular-nums" }}
+        >
+          {String(index + 1).padStart(2, "0")}
         </span>
-        <StatusBadge status={task.status} />
-      </div>
-
-      <div className="flex items-center justify-between text-[11px] text-slate-500 mt-1">
-        <span className="truncate flex items-center gap-1">
-          {agent ? (
-            <>
-              <Icon name="agent" size={11} className="text-slate-400" />
-              <span className="text-slate-400">{agent.name}</span>
-            </>
-          ) : (
-            <span className="italic">finding the right agent…</span>
-          )}
-        </span>
-        <span className="flex items-center gap-1">
-          <Icon name="clock" size={11} />
-          {relativeTime(task.createdAt)}
-        </span>
-      </div>
-
-      {task.requiredSkills.length > 0 && (
-        <div className="flex flex-wrap gap-1 mt-2">
-          {task.requiredSkills.map((s) => (
-            <span key={s} className="chip capitalize">
-              {s}
-            </span>
-          ))}
-        </div>
       )}
-
-      {task.status === "in_progress" && task.startedAt && (
-        <div className="mt-2">
-          <ProgressBar startedAt={task.startedAt} />
-        </div>
-      )}
-
-      {(task.status === "completed" || task.status === "failed") &&
-        Boolean(task.result) && (
-          <div
-            className={`mt-2 text-[11px] border-t border-line/70 pt-1.5 truncate ${
-              task.status === "failed" ? "text-err/80" : "text-slate-300"
-            }`}
+      <div>
+        <div className="flex items-baseline justify-between gap-2">
+          <h4
+            className="display"
+            style={{
+              fontVariationSettings: '"opsz" 24, "SOFT" 20',
+              fontSize: 17,
+              fontWeight: 500,
+              lineHeight: 1.15,
+            }}
           >
-            <span className="text-slate-500 mr-1">result:</span>
-            {summarizeResult(task.result)}
+            {task.title}
+          </h4>
+          <span className={taskStampClass[task.status]}>
+            {taskStatusLabel[task.status]}
+          </span>
+        </div>
+
+        <div className="mt-1 flex items-baseline justify-between gap-2 text-[11.5px] text-inkSoft">
+          <span className="italic">
+            {agent ? (
+              <>
+                <span className="text-inkMute mono small-caps text-[9px] mr-1">
+                  by
+                </span>
+                {agent.name}
+              </>
+            ) : (
+              <span className="text-inkMute">awaiting a free hand…</span>
+            )}
+          </span>
+          <span
+            className="mono text-[10px] text-inkMute"
+            style={{ fontVariantNumeric: "tabular-nums" }}
+          >
+            {relativeTime(task.createdAt)}
+          </span>
+        </div>
+
+        {task.requiredSkills.length > 0 && (
+          <div className="mt-1.5 text-[11px] text-inkMute italic">
+            <span className="mono small-caps text-[9px] mr-1.5 not-italic">
+              req
+            </span>
+            <span className="capitalize">
+              {task.requiredSkills.join(", ")}
+            </span>
           </div>
         )}
-    </motion.div>
+
+        {task.status === "in_progress" && task.startedAt && (
+          <ProgressInk startedAt={task.startedAt} />
+        )}
+
+        {isFinal && Boolean(task.result) && (
+          <blockquote
+            className={`mt-2 pl-3 border-l-2 ${
+              task.status === "failed"
+                ? "border-stamp text-stamp/90"
+                : "border-sage text-ink"
+            } text-[12.5px] italic leading-snug`}
+            style={{
+              fontVariationSettings: '"opsz" 18, "SOFT" 30',
+            }}
+          >
+            {summarizeResult(task.result)}
+          </blockquote>
+        )}
+      </div>
+    </motion.article>
   );
 }

@@ -1,98 +1,112 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import Icon from "./Icon";
+import { Roman } from "./Mark";
 
 const STEPS = [
   {
-    icon: "send" as const,
-    title: "1. Send a task",
-    body: "Describe a job and the skills it needs. The swarm queues it instantly.",
-    color: "text-accent2",
+    title: "Lodge an order",
+    body: "Describe the work and the skills required. The order is filed in the queue at once.",
   },
   {
-    icon: "agent" as const,
-    title: "2. Agents pick it up",
-    body: "The best-matched, available agent is auto-assigned by skills and trust.",
-    color: "text-accent",
+    title: "An agent takes it on",
+    body: "The Quartermaster routes the order to the best-matched, available hand by skill and standing.",
   },
   {
-    icon: "tool" as const,
-    title: "3. Tools do the work",
-    body: "Agents call pluggable tools — email, data, AI, execution — to deliver results.",
-    color: "text-ok",
+    title: "Tools deliver the result",
+    body: "Agents call the appropriate instrument — wire, ledger, mind, or runner — and the outcome is recorded.",
   },
 ];
 
-const STORAGE_KEY = "octo:howitworks:dismissed";
+const KEY = "octo:howitworks:dismissed";
 
 export default function HowItWorks() {
   const [open, setOpen] = useState<boolean | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    setOpen(window.localStorage.getItem(STORAGE_KEY) !== "1");
+    setOpen(window.localStorage.getItem(KEY) !== "1");
   }, []);
 
   if (open === null) return null;
+
   if (!open) {
     return (
-      <div className="px-6 sm:px-8 py-2 border-b border-line/70 flex items-center justify-end">
+      <div className="px-6 sm:px-10 py-2 border-b border-ink/20 flex items-center justify-end">
         <button
           onClick={() => {
             setOpen(true);
-            window.localStorage.removeItem(STORAGE_KEY);
+            window.localStorage.removeItem(KEY);
           }}
-          className="text-[11px] text-slate-500 hover:text-slate-300 inline-flex items-center gap-1"
+          className="mono small-caps text-[10px] text-inkMute hover:text-stamp"
         >
-          <Icon name="book" size={11} />
-          How it works
+          Re-open the Manual ☞
         </button>
       </div>
     );
   }
 
   return (
-    <section className="px-6 sm:px-8 py-4 border-b border-line/70">
-      <motion.div
-        initial={{ opacity: 0, y: 4 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="grid grid-cols-1 sm:grid-cols-3 gap-3"
-      >
+    <section className="px-6 sm:px-10 py-7 border-b border-ink/30 relative">
+      <div className="flex items-baseline gap-3 mb-5">
+        <span className="mono small-caps text-[10px] text-inkMute">
+          Field Manual ·
+        </span>
+        <h2
+          className="display italic"
+          style={{
+            fontVariationSettings: '"opsz" 36, "WONK" 1',
+            fontSize: 22,
+            color: "var(--ink)",
+          }}
+        >
+          How the fleet operates
+        </h2>
+      </div>
+
+      <ol className="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-6 reveal">
         {STEPS.map((s, i) => (
-          <motion.div
-            key={s.title}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 * i, duration: 0.35 }}
-            className="card card-hover p-3 flex items-start gap-3"
-          >
+          <li key={s.title} className="grid grid-cols-[auto_1fr] gap-4">
             <div
-              className={`w-9 h-9 rounded-lg bg-panel2/60 border border-line flex items-center justify-center shrink-0 ${s.color}`}
+              className="text-stamp pt-1"
+              style={{
+                fontFamily: "var(--font-display)",
+                fontVariationSettings: '"opsz" 144, "WONK" 1',
+                fontSize: 56,
+                lineHeight: 0.8,
+                letterSpacing: "-0.02em",
+              }}
             >
-              <Icon name={s.icon} size={16} />
+              <Roman n={i + 1} />
             </div>
-            <div className="flex flex-col">
-              <span className="text-sm font-semibold text-slate-100">
+            <div className="border-l border-ink/30 pl-4">
+              <h3
+                className="display"
+                style={{
+                  fontVariationSettings: '"opsz" 24, "SOFT" 20',
+                  fontSize: 18,
+                  fontWeight: 500,
+                }}
+              >
                 {s.title}
-              </span>
-              <span className="text-[12px] text-slate-400 leading-snug">
+              </h3>
+              <p className="mt-1 text-[13.5px] text-inkSoft leading-snug">
                 {s.body}
-              </span>
+              </p>
             </div>
-          </motion.div>
+          </li>
         ))}
-      </motion.div>
-      <div className="flex items-center justify-end mt-2">
+      </ol>
+
+      <div className="flex items-center justify-end mt-5">
         <button
           onClick={() => {
             setOpen(false);
-            window.localStorage.setItem(STORAGE_KEY, "1");
+            window.localStorage.setItem(KEY, "1");
           }}
-          className="text-[11px] text-slate-500 hover:text-slate-300"
+          className="mono small-caps text-[10px] text-inkMute hover:text-stamp"
         >
-          got it — hide
+          Close the Manual ✕
         </button>
       </div>
     </section>

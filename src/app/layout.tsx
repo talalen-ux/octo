@@ -1,10 +1,26 @@
 import type { Metadata } from "next";
+import { Fraunces, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-display",
+  axes: ["SOFT", "WONK", "opsz"],
+  display: "swap",
+  style: ["normal", "italic"],
+});
+
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  display: "swap",
+  weight: ["400", "500", "700"],
+});
+
 export const metadata: Metadata = {
-  title: "Octo Swarm — Watch AI agents collaborate in real time",
+  title: "Octo Swarm — Operations Log",
   description:
-    "A live, simulated network of AI agents that pick up jobs, work together, and deliver results.",
+    "A live ledger of an autonomous agent fleet — tasks dispatched, picked up, and resolved in real time.",
 };
 
 export default function RootLayout({
@@ -13,10 +29,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="text-slate-200 font-sans antialiased min-h-screen">
-        {children}
-      </body>
+    <html
+      lang="en"
+      className={`${fraunces.variable} ${mono.variable}`}
+    >
+      <body className="antialiased min-h-screen">{children}</body>
     </html>
   );
 }

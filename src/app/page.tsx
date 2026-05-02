@@ -13,29 +13,93 @@ import CreateTaskForm from "@/components/CreateTaskForm";
 import CreateAgentForm from "@/components/CreateAgentForm";
 import Hero from "@/components/Hero";
 import HowItWorks from "@/components/HowItWorks";
-import Icon from "@/components/Icon";
 
 const SwarmGraph = dynamic(() => import("@/components/SwarmGraph"), {
   ssr: false,
   loading: () => (
     <div className="h-full w-full flex items-center justify-center">
-      <div className="flex flex-col items-center gap-2 text-slate-500">
-        <div className="relative w-8 h-8">
-          <div className="absolute inset-0 rounded-full border border-accent/40 animate-ping" />
-          <div className="absolute inset-1 rounded-full border border-accent2/40 animate-ping [animation-delay:200ms]" />
-        </div>
-        <span className="text-[11px]">loading swarm graph…</span>
+      <div className="flex flex-col items-center gap-2 text-inkMute">
+        <div className="display text-2xl typewriter">drafting chart</div>
       </div>
     </div>
   ),
 });
 
-const DEMO_TASKS = [
-  { title: "Summarize crypto market today", description: "Brief overview of major moves.", requiredSkills: ["analysis"] },
-  { title: "Email partner agents", description: "Send a short intro to peer swarm.", requiredSkills: ["email", "outreach"] },
-  { title: "Find best stablecoin yield", description: "Survey current top APYs.", requiredSkills: ["data", "analysis"] },
-  { title: "Run a small rebalance", description: "Place a simulated trade.", requiredSkills: ["trading", "tx"] },
+const DEMO = [
+  {
+    title: "Summarise the morning markets",
+    description: "A short brief on overnight moves.",
+    requiredSkills: ["analysis"],
+  },
+  {
+    title: "Email the partner agents",
+    description: "Send a polite intro to the peer fleet.",
+    requiredSkills: ["email", "outreach"],
+  },
+  {
+    title: "Find the best stablecoin yield",
+    description: "Survey current top APYs.",
+    requiredSkills: ["data", "analysis"],
+  },
+  {
+    title: "Run a small rebalance",
+    description: "Place a simulated trade.",
+    requiredSkills: ["trading", "tx"],
+  },
 ];
+
+function SectionHead({
+  numeral,
+  title,
+  rule,
+  count,
+}: {
+  numeral: string;
+  title: string;
+  rule?: string;
+  count?: number | string;
+}) {
+  return (
+    <div className="flex items-baseline gap-3 mb-3">
+      <span
+        className="display text-stamp"
+        style={{
+          fontVariationSettings: '"opsz" 144, "WONK" 1',
+          fontSize: 28,
+          lineHeight: 1,
+          letterSpacing: "-0.02em",
+        }}
+      >
+        {numeral}
+      </span>
+      <h2
+        className="display"
+        style={{
+          fontVariationSettings: '"opsz" 36, "SOFT" 20, "WONK" 1',
+          fontSize: 22,
+          fontStyle: "italic",
+          fontWeight: 500,
+          color: "var(--ink)",
+        }}
+      >
+        {title}
+      </h2>
+      {rule && (
+        <span className="mono small-caps text-[9.5px] text-inkMute mt-1.5">
+          — {rule}
+        </span>
+      )}
+      {count !== undefined && (
+        <span
+          className="mono small-caps text-[9.5px] text-inkMute ml-auto mt-1.5"
+          style={{ fontVariantNumeric: "tabular-nums" }}
+        >
+          № {count}
+        </span>
+      )}
+    </div>
+  );
+}
 
 export default function DashboardPage() {
   const { snapshot, events, connected } = useSwarm();
@@ -54,22 +118,21 @@ export default function DashboardPage() {
     return m;
   }, [tasks]);
 
-  const activeTasks = tasks.filter(
+  const active = tasks.filter(
     (t) => t.status !== "completed" && t.status !== "failed",
   );
-  const recentDone = tasks
+  const filed = tasks
     .filter((t) => t.status === "completed" || t.status === "failed")
     .slice(0, 6);
 
-  const totalAgents = agents.length;
-  const systemLoad =
-    totalAgents === 0 ? 0 : Math.round((stats.busy / totalAgents) * 100);
+  const total = agents.length;
+  const load = total === 0 ? 0 : Math.round((stats.busy / total) * 100);
 
   async function runDemo() {
     if (seeding) return;
     setSeeding(true);
     try {
-      for (const t of DEMO_TASKS) {
+      for (const t of DEMO) {
         await api("/api/tasks", { method: "POST", body: JSON.stringify(t) });
         await new Promise((r) => setTimeout(r, 350));
       }
@@ -85,80 +148,79 @@ export default function DashboardPage() {
       <Hero connected={connected} />
       <HowItWorks />
 
-      {/* Stats */}
-      <section className="px-6 sm:px-8 py-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 border-b border-line/70">
-        <StatPill
-          label="Agents"
-          value={totalAgents}
-          tone="accent2"
-          icon={<Icon name="agent" size={14} />}
-          hint={`${stats.idle} available · ${stats.busy} working`}
-        />
-        <StatPill
-          label="Working"
-          value={stats.busy}
-          tone="warn"
-          icon={<Icon name="play" size={14} />}
-          hint="agents currently busy"
-        />
-        <StatPill
-          label="Waiting"
-          value={stats.queued}
-          tone="default"
-          icon={<Icon name="queue" size={14} />}
-          hint="tasks awaiting an agent"
-        />
-        <StatPill
-          label="In progress"
-          value={stats.inProgress}
-          tone="accent"
-          icon={<Icon name="lightning" size={14} />}
-          hint="tasks being executed"
-        />
-        <StatPill
-          label="Delivered"
-          value={stats.completed}
-          tone="ok"
-          icon={<Icon name="check" size={14} />}
-          hint="completed tasks"
-        />
-        <StatPill
-          label="Load"
-          value={`${systemLoad}%`}
-          tone={systemLoad > 75 ? "warn" : "default"}
-          icon={<Icon name="spark" size={14} />}
-          hint="share of agents busy"
-        />
+      {/* Ledger figures */}
+      <section className="px-6 sm:px-10 pt-6 pb-2 border-b border-ink/30">
+        <div className="flex items-baseline gap-3 mb-3">
+          <span className="mono small-caps text-[10px] text-inkMute">
+            Tabula I — Operations at a glance
+          </span>
+          <span className="flex-1 ink-rule h-[1px] mt-2" />
+        </div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6"
+        >
+          <StatPill
+            numeral="i"
+            label="Hands enlisted"
+            value={total}
+            tone="ink"
+            hint={`${stats.idle} ready · ${stats.busy} on duty`}
+          />
+          <StatPill
+            numeral="ii"
+            label="On duty"
+            value={stats.busy}
+            tone="stamp"
+            hint="agents currently engaged"
+          />
+          <StatPill
+            numeral="iii"
+            label="Awaiting"
+            value={stats.queued}
+            tone="ink"
+            hint="orders queued for routing"
+          />
+          <StatPill
+            numeral="iv"
+            label="Underway"
+            value={stats.inProgress}
+            tone="deep"
+            hint="orders being executed"
+          />
+          <StatPill
+            numeral="v"
+            label="Filed"
+            value={stats.completed}
+            tone="sage"
+            hint="orders delivered to date"
+          />
+          <StatPill
+            numeral="vi"
+            label="Load"
+            value={`${load}%`}
+            tone="gold"
+            hint="share of fleet engaged"
+          />
+        </motion.div>
       </section>
 
       {/* Main grid */}
-      <section className="flex-1 grid grid-cols-12 gap-4 p-4 sm:p-6">
-        {/* Left — agents */}
-        <aside className="col-span-12 lg:col-span-3 xl:col-span-3 flex flex-col gap-4 min-h-0">
-          <div className="card p-4 flex flex-col gap-3">
-            <div className="flex items-center justify-between">
-              <h2 className="h-section flex items-center gap-2">
-                <Icon name="plus" size={13} className="text-accent2" />
-                Spawn agent
-              </h2>
-            </div>
-            <p className="text-[11px] text-slate-500 -mt-1">
-              Add an AI worker to your swarm.
-            </p>
+      <section className="grid grid-cols-12 gap-x-8 gap-y-6 px-6 sm:px-10 py-8">
+        {/* Left column — Spawn + Hands */}
+        <aside className="col-span-12 lg:col-span-3 flex flex-col gap-6">
+          <section>
+            <SectionHead numeral="§" title="Enlist a hand" rule="agents" />
             <CreateAgentForm />
-          </div>
+          </section>
 
-          <div className="card p-4 flex flex-col gap-3 flex-1 min-h-0">
-            <div className="flex items-center justify-between">
-              <h2 className="h-section flex items-center gap-2">
-                <Icon name="agent" size={13} className="text-accent2" />
-                Your agents
-              </h2>
-              <span className="text-[10px] text-slate-500">
-                {totalAgents}
-              </span>
-            </div>
-            <div className="flex flex-col gap-2 overflow-y-auto pr-1 -mr-1 max-h-[60vh]">
+          <div className="ink-rule h-[1px]" />
+
+          <section>
+            <SectionHead numeral="§" title="The fleet" rule="hands" count={total} />
+            <div className="flex flex-col -mx-1 max-h-[58vh] overflow-y-auto">
               <AnimatePresence initial={false}>
                 {agents.map((a) => (
                   <AgentCard
@@ -171,136 +233,132 @@ export default function DashboardPage() {
                 ))}
               </AnimatePresence>
               {agents.length === 0 && (
-                <div className="text-[12px] text-slate-500 italic py-6 text-center">
-                  No agents yet.
-                  <br />
-                  Spawn one to start.
+                <div className="text-[12.5px] text-inkMute italic py-6 text-center">
+                  No hands enlisted. Begin above.
                 </div>
               )}
             </div>
-          </div>
+          </section>
         </aside>
 
-        {/* Center — graph + activity */}
-        <section className="col-span-12 lg:col-span-6 xl:col-span-6 flex flex-col gap-4 min-h-0">
-          <div className="card relative overflow-hidden flex-1 min-h-[440px]">
-            <div className="absolute z-10 top-3 left-4 flex items-center gap-2">
-              <Icon name="graph" size={13} className="text-accent" />
-              <span className="h-section">Live swarm</span>
-            </div>
-            <div className="absolute z-10 top-3 right-3 flex items-center gap-2">
-              <motion.button
-                whileTap={{ scale: 0.95 }}
+        {/* Center — Chart + Wire */}
+        <section className="col-span-12 lg:col-span-6 flex flex-col gap-6">
+          <section className="panel-soft p-5 min-h-[460px] flex flex-col">
+            <div className="flex items-baseline justify-between gap-3 mb-3">
+              <SectionHead
+                numeral="§"
+                title="Operational chart"
+                rule="live wiring"
+              />
+              <button
                 onClick={runDemo}
                 disabled={seeding}
-                className="text-[11px] inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-accent/40 bg-accent/10 text-accent hover:bg-accent/20 transition-colors disabled:opacity-50"
-                title="Send a batch of demo tasks to the swarm"
+                className="btn-outline"
               >
-                <Icon name="lightning" size={12} />
-                {seeding ? "running…" : "Run demo"}
-              </motion.button>
+                {seeding ? "Filing…" : "Run demo"}
+              </button>
             </div>
-            <SwarmGraph snapshot={snapshot} />
-          </div>
+            <div className="flex-1 min-h-[400px] border border-ink/30 relative bg-paper">
+              <SwarmGraph snapshot={snapshot} />
+            </div>
+            <p className="mt-2 text-[11px] text-inkMute italic">
+              Fig. 1 — Instruments (left) supply hands (centre) as orders
+              (right) move through the fleet.
+            </p>
+          </section>
 
-          <div className="card p-4 h-44 flex flex-col gap-2">
-            <div className="flex items-center justify-between">
-              <h2 className="h-section flex items-center gap-2">
-                <Icon name="lightning" size={13} className="text-warn" />
-                Live activity
-              </h2>
-              <span className="text-[10px] text-slate-500">
-                {events.length} events
-              </span>
+          <section>
+            <SectionHead
+              numeral="§"
+              title="Wire transmissions"
+              rule="live"
+              count={events.length}
+            />
+            <div className="border-t border-ink/40 pt-2 max-h-44 overflow-y-auto">
+              <EventFeed events={events} />
             </div>
-            <EventFeed events={events} />
-          </div>
+          </section>
         </section>
 
-        {/* Right — tasks */}
-        <aside className="col-span-12 lg:col-span-3 xl:col-span-3 flex flex-col gap-4 min-h-0">
-          <div className="card p-4 flex flex-col gap-3 relative overflow-hidden">
-            <div
-              className="absolute -top-px left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent"
-              aria-hidden
-            />
-            <div className="flex items-center justify-between">
-              <h2 className="h-section flex items-center gap-2">
-                <Icon name="send" size={13} className="text-accent" />
-                Send a task
-              </h2>
-            </div>
-            <p className="text-[11px] text-slate-500 -mt-1">
-              The swarm will route it to the best agent.
-            </p>
+        {/* Right — Lodge order + In-flight + Recently filed */}
+        <aside className="col-span-12 lg:col-span-3 flex flex-col gap-6">
+          <section>
+            <SectionHead numeral="§" title="Lodge an order" rule="dispatch" />
             <CreateTaskForm />
-          </div>
+          </section>
 
-          <div className="card p-4 flex flex-col gap-2 flex-1 min-h-0">
-            <div className="flex items-center justify-between">
-              <h2 className="h-section flex items-center gap-2">
-                <Icon name="play" size={13} className="text-accent" />
-                In flight
-              </h2>
-              <span className="text-[10px] text-slate-500">
-                {activeTasks.length}
-              </span>
-            </div>
-            <div className="flex flex-col gap-2 overflow-y-auto pr-1 -mr-1 max-h-[40vh]">
+          <div className="ink-rule h-[1px]" />
+
+          <section>
+            <SectionHead
+              numeral="§"
+              title="In flight"
+              rule="active orders"
+              count={active.length}
+            />
+            <div className="max-h-[42vh] overflow-y-auto pr-1 -mr-1">
               <AnimatePresence initial={false}>
-                {activeTasks.map((t) => (
+                {active.map((t, i) => (
                   <TaskRow
                     key={t.id}
                     task={t}
                     agent={
                       t.assignedAgent ? agentMap.get(t.assignedAgent) : null
                     }
+                    index={i}
                   />
                 ))}
               </AnimatePresence>
-              {activeTasks.length === 0 && (
-                <div className="text-[12px] text-slate-500 italic py-6 text-center">
-                  All quiet. Send a task above.
+              {active.length === 0 && (
+                <div className="text-[12.5px] text-inkMute italic py-6 text-center">
+                  All quiet on the wire.
                 </div>
               )}
             </div>
-          </div>
+          </section>
 
-          <div className="card p-4 flex flex-col gap-2 max-h-72">
-            <div className="flex items-center justify-between">
-              <h2 className="h-section flex items-center gap-2">
-                <Icon name="check" size={13} className="text-ok" />
-                Recently delivered
-              </h2>
-              <span className="text-[10px] text-slate-500">
-                {recentDone.length}
-              </span>
-            </div>
-            <div className="flex flex-col gap-2 overflow-y-auto pr-1 -mr-1">
+          <div className="ink-rule h-[1px]" />
+
+          <section>
+            <SectionHead
+              numeral="§"
+              title="Recently filed"
+              rule="archive"
+              count={filed.length}
+            />
+            <div className="max-h-72 overflow-y-auto pr-1 -mr-1">
               <AnimatePresence initial={false}>
-                {recentDone.map((t) => (
+                {filed.map((t, i) => (
                   <TaskRow
                     key={t.id}
                     task={t}
                     agent={
                       t.assignedAgent ? agentMap.get(t.assignedAgent) : null
                     }
+                    index={i}
                   />
                 ))}
               </AnimatePresence>
-              {recentDone.length === 0 && (
-                <div className="text-[12px] text-slate-500 italic py-4 text-center">
-                  No deliveries yet.
+              {filed.length === 0 && (
+                <div className="text-[12.5px] text-inkMute italic py-4 text-center">
+                  Nothing filed yet.
                 </div>
               )}
             </div>
-          </div>
+          </section>
         </aside>
       </section>
 
-      <footer className="px-6 sm:px-8 py-3 border-t border-line/70 text-[10px] text-slate-600 flex items-center justify-between">
-        <span>Octo Swarm · simulated agent network</span>
-        <span>v0.1 · MVP</span>
+      <footer className="px-6 sm:px-10 py-4 border-t border-ink mt-auto">
+        <div className="flex items-baseline justify-between gap-2 text-[10px] mono small-caps text-inkMute">
+          <span>Octo·Swarm</span>
+          <span className="italic font-display lowercase tracking-normal text-inkSoft">
+            <span style={{ fontVariationSettings: '"opsz" 24, "WONK" 1' }}>
+              ❦ Filed in good faith. All entries simulated. ❦
+            </span>
+          </span>
+          <span>v0·1 — Edition I</span>
+        </div>
       </footer>
     </main>
   );
