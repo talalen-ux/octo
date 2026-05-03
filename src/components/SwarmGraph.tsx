@@ -13,45 +13,47 @@ import "reactflow/dist/style.css";
 import type { Snapshot, Agent, Task } from "@/types";
 import { agentStatusLabel, agentTypeLabel, taskStatusLabel } from "@/lib/labels";
 
-const INK = "#f4f5f7";
-const INK_SOFT = "#a1a4ac";
-const INK_MUTE = "#5b5f68";
-const PAPER = "#0e1013";
-const PAPER_SHADE = "#14171c";
-const RULE = "#1f232a";
-const RULE_STRONG = "#2a2f38";
-const STAMP = "#ff5a4a";
-const DEEP = "#5aa9ff";
-const SAGE = "#4ed29a";
-const GOLD = "#e7b75a";
+const STAR = "#f6e7c4";
+const STAR_SOFT = "#b9ad8d";
+const STAR_MUTE = "#5e5740";
+const STAR_FAINT = "#3a3520";
+const VOID = "#060814";
+const VOID_DEEP = "#03040a";
+const ABYSS = "#0b0e1c";
+const RULE = "#1c1f33";
+const RULE_GOLD = "#3a3520";
+const GOLD = "#ffb454";
+const AZURE = "#9bc8ff";
+const LEAF = "#c5e08a";
+const ROSE = "#ff7166";
 
 function agentColor(a: Agent): string {
-  if (a.status === "offline") return INK_MUTE;
-  if (a.status === "busy") return STAMP;
-  return SAGE;
+  if (a.status === "offline") return STAR_MUTE;
+  if (a.status === "busy") return GOLD;
+  return LEAF;
 }
 
 function taskColor(t: Task): string {
   switch (t.status) {
     case "queued":
-      return INK_SOFT;
+      return STAR_SOFT;
     case "assigned":
-      return DEEP;
+      return AZURE;
     case "in_progress":
-      return STAMP;
+      return GOLD;
     case "completed":
-      return SAGE;
+      return LEAF;
     case "failed":
-      return STAMP;
+      return ROSE;
   }
 }
 
-const nodeBase = {
-  background: PAPER_SHADE,
+const cardBase = {
+  background: ABYSS,
   border: `1px solid ${RULE}`,
-  borderRadius: 8,
+  borderRadius: 2,
   padding: "10px 12px",
-  color: INK,
+  color: STAR,
   boxShadow: "none" as const,
 };
 
@@ -72,12 +74,13 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
   const xTool = 0;
   const xAgent = colW;
   const xTask = colW * 2;
-  const yTop = 60;
+  const yTop = 70;
 
+  // Column heads — Roman numeral + italic title
   const heads = [
-    { x: xTool, label: "Tools" },
-    { x: xAgent, label: "Agents" },
-    { x: xTask, label: "Tasks" },
+    { x: xTool, label: "Instruments", num: "I" },
+    { x: xAgent, label: "Hands", num: "II" },
+    { x: xTask, label: "Orders", num: "III" },
   ];
   heads.forEach((h, i) => {
     nodes.push({
@@ -87,19 +90,33 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
       selectable: false,
       data: {
         label: (
-          <div
-            style={{
-              width: 224,
-              fontFamily: "var(--font-mono)",
-              textTransform: "uppercase",
-              letterSpacing: "0.12em",
-              fontSize: 10,
-              color: INK_MUTE,
-              paddingBottom: 6,
-              borderBottom: `1px solid ${RULE}`,
-            }}
-          >
-            {h.label}
+          <div style={{ width: 230, color: STAR, paddingBottom: 6 }}>
+            <div
+              style={{
+                fontFamily: "var(--font-display)",
+                fontStyle: "italic",
+                fontSize: 28,
+                color: GOLD,
+                lineHeight: 1,
+                letterSpacing: "-0.02em",
+              }}
+            >
+              {h.num}
+            </div>
+            <div
+              style={{
+                fontFamily: "var(--font-display)",
+                fontStyle: "italic",
+                fontSize: 16,
+                color: STAR,
+                marginTop: 4,
+                paddingBottom: 4,
+                borderBottom: `1px solid ${RULE_GOLD}`,
+                width: 200,
+              }}
+            >
+              {h.label}
+            </div>
           </div>
         ),
       },
@@ -108,7 +125,7 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
         border: "none",
         boxShadow: "none",
         padding: 0,
-        width: 224,
+        width: 230,
       },
     });
   });
@@ -116,28 +133,42 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
   tools.forEach((tool, i) => {
     nodes.push({
       id: `tool-${tool.id}`,
-      position: { x: xTool, y: yTop + i * 96 },
+      position: { x: xTool, y: yTop + i * 100 },
       data: {
         label: (
           <div className="text-left" style={{ width: 200 }}>
             <div
               style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
                 fontFamily: "var(--font-mono)",
                 fontSize: 9.5,
-                letterSpacing: "0.10em",
+                letterSpacing: "0.18em",
                 textTransform: "uppercase",
                 color: GOLD,
               }}
             >
+              <span
+                style={{
+                  display: "inline-block",
+                  width: 6,
+                  height: 6,
+                  background: GOLD,
+                  transform: "rotate(45deg)",
+                  boxShadow: `0 0 8px ${GOLD}`,
+                }}
+              />
               {tool.type}
             </div>
             <div
               style={{
-                fontSize: 14,
-                color: INK,
-                fontWeight: 600,
-                marginTop: 3,
-                letterSpacing: "-0.01em",
+                fontFamily: "var(--font-display)",
+                fontStyle: "italic",
+                fontSize: 17,
+                color: STAR,
+                marginTop: 4,
+                letterSpacing: "-0.005em",
               }}
             >
               {tool.name}
@@ -146,7 +177,7 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
               style={{
                 fontFamily: "var(--font-mono)",
                 fontSize: 10.5,
-                color: INK_MUTE,
+                color: STAR_MUTE,
                 marginTop: 4,
               }}
             >
@@ -155,7 +186,7 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
           </div>
         ),
       },
-      style: { ...nodeBase, width: 224 },
+      style: { ...cardBase, width: 224 },
     });
   });
 
@@ -164,26 +195,29 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
     const busy = agent.status === "busy";
     nodes.push({
       id: `agent-${agent.id}`,
-      position: { x: xAgent, y: yTop + i * 116 },
+      position: { x: xAgent, y: yTop + i * 124 },
       data: {
         label: (
           <div className="text-left" style={{ width: 210 }}>
-            <div className="flex items-center gap-2">
+            <div
+              style={{ display: "flex", alignItems: "center", gap: 8 }}
+            >
               <span
                 style={{
+                  position: "relative",
                   display: "inline-block",
-                  width: 7,
-                  height: 7,
+                  width: 10,
+                  height: 10,
                   borderRadius: "50%",
                   background: c,
-                  boxShadow: busy ? `0 0 0 3px rgba(255,90,74,0.18)` : "none",
+                  boxShadow: `0 0 10px ${c}, 0 0 2px ${c}`,
                 }}
               />
               <span
                 style={{
                   fontFamily: "var(--font-mono)",
                   fontSize: 9.5,
-                  letterSpacing: "0.10em",
+                  letterSpacing: "0.18em",
                   textTransform: "uppercase",
                   color: c,
                 }}
@@ -195,8 +229,8 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
                   marginLeft: "auto",
                   fontFamily: "var(--font-mono)",
                   fontSize: 9.5,
-                  color: INK_MUTE,
-                  letterSpacing: "0.08em",
+                  color: STAR_MUTE,
+                  letterSpacing: "0.16em",
                   textTransform: "uppercase",
                 }}
               >
@@ -205,11 +239,12 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
             </div>
             <div
               style={{
-                fontSize: 15,
-                color: INK,
-                fontWeight: 600,
+                fontFamily: "var(--font-display)",
+                fontStyle: "italic",
+                fontSize: 19,
+                color: STAR,
                 marginTop: 4,
-                letterSpacing: "-0.01em",
+                letterSpacing: "-0.005em",
               }}
             >
               {agent.name}
@@ -218,18 +253,18 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
               style={{
                 fontFamily: "var(--font-mono)",
                 fontSize: 10.5,
-                color: INK_MUTE,
+                color: STAR_MUTE,
                 marginTop: 3,
               }}
             >
-              trust {Math.round(agent.reputation * 100)} · done{" "}
+              trust {Math.round(agent.reputation * 100)} · filed{" "}
               {agent.completedCount}
             </div>
             <div
               style={{
                 fontFamily: "var(--font-mono)",
                 fontSize: 10.5,
-                color: INK_SOFT,
+                color: STAR_SOFT,
                 marginTop: 2,
               }}
             >
@@ -239,40 +274,57 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
         ),
       },
       style: {
-        ...nodeBase,
+        ...cardBase,
         width: 234,
-        border: busy ? `1px solid ${STAMP}` : `1px solid ${RULE_STRONG}`,
+        border: `1px solid ${busy ? GOLD : RULE_GOLD}`,
+        boxShadow: busy
+          ? `0 0 0 1px rgba(255,180,84,0.18), 0 0 24px -4px rgba(255,180,84,0.35)`
+          : "none",
       },
     });
   });
 
   active.forEach((task, i) => {
     const c = taskColor(task);
+    const running = task.status === "in_progress";
     nodes.push({
       id: `task-${task.id}`,
-      position: { x: xTask, y: yTop + i * 96 },
+      position: { x: xTask, y: yTop + i * 100 },
       data: {
         label: (
           <div className="text-left" style={{ width: 200 }}>
             <div
               style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
                 fontFamily: "var(--font-mono)",
                 fontSize: 9.5,
-                letterSpacing: "0.10em",
+                letterSpacing: "0.18em",
                 textTransform: "uppercase",
                 color: c,
               }}
             >
+              <span
+                style={{
+                  width: 5,
+                  height: 5,
+                  borderRadius: "50%",
+                  background: c,
+                  boxShadow: running ? `0 0 8px ${c}` : "none",
+                }}
+              />
               {taskStatusLabel[task.status]}
             </div>
             <div
               style={{
-                fontSize: 14,
-                color: INK,
-                fontWeight: 600,
-                marginTop: 3,
-                lineHeight: 1.25,
-                letterSpacing: "-0.01em",
+                fontFamily: "var(--font-display)",
+                fontStyle: "italic",
+                fontSize: 15.5,
+                color: STAR,
+                marginTop: 4,
+                lineHeight: 1.2,
+                letterSpacing: "-0.005em",
               }}
             >
               {task.title}
@@ -281,7 +333,7 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
               style={{
                 fontFamily: "var(--font-mono)",
                 fontSize: 10.5,
-                color: INK_MUTE,
+                color: STAR_MUTE,
                 marginTop: 4,
               }}
             >
@@ -291,12 +343,12 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
         ),
       },
       style: {
-        ...nodeBase,
+        ...cardBase,
         width: 224,
-        border:
-          task.status === "in_progress"
-            ? `1px solid ${STAMP}`
-            : `1px solid ${RULE}`,
+        border: `1px solid ${running ? GOLD : RULE_GOLD}`,
+        boxShadow: running
+          ? `0 0 18px -4px rgba(255,180,84,0.35)`
+          : "none",
       },
     });
   });
@@ -322,7 +374,7 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
           target: `agent-${task.assignedAgent}`,
           type: "smoothstep",
           animated: true,
-          style: { stroke: GOLD, strokeWidth: 1.2, strokeDasharray: "4 3" },
+          style: { stroke: GOLD, strokeWidth: 1.2, strokeDasharray: "3 3" },
           markerEnd: { type: MarkerType.ArrowClosed, color: GOLD },
         });
       }
@@ -336,7 +388,7 @@ export default function SwarmGraph({ snapshot }: { snapshot: Snapshot }) {
   const { nodes, edges } = useMemo(() => arrange(snapshot), [snapshot]);
 
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full relative">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -350,11 +402,12 @@ export default function SwarmGraph({ snapshot }: { snapshot: Snapshot }) {
         panOnDrag
         proOptions={{ hideAttribution: true }}
       >
+        {/* faint celestial dot grid */}
         <Background
           variant={BackgroundVariant.Dots}
-          color={RULE_STRONG}
-          gap={22}
-          size={1}
+          color={RULE_GOLD}
+          gap={28}
+          size={1.1}
         />
         <Controls showInteractive={false} position="bottom-right" />
       </ReactFlow>

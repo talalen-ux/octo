@@ -1,24 +1,36 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Newsreader, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
+const newsreader = Newsreader({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-display",
+  axes: ["opsz"],
+  weight: ["300", "400", "500", "600", "700"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
-const mono = JetBrains_Mono({
+const plex = IBM_Plex_Sans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  weight: ["300", "400", "500", "600"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
+const plexMono = IBM_Plex_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
+  weight: ["300", "400", "500", "600"],
+  style: ["normal", "italic"],
   display: "swap",
-  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
-  title: "Octo Swarm",
+  title: "Octo·Swarm — Atlas of Octans",
   description:
-    "Live dashboard for an autonomous agent fleet — tasks dispatched, picked up, and resolved in real time.",
+    "A celestial atlas for an autonomous agent fleet. Tasks dispatched, picked up, and completed in real time.",
 };
 
 export default function RootLayout({
@@ -27,7 +39,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${mono.variable}`}>
+    <html
+      lang="en"
+      className={`${newsreader.variable} ${plex.variable} ${plexMono.variable}`}
+    >
       <body className="antialiased min-h-screen">{children}</body>
     </html>
   );

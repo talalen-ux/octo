@@ -1,17 +1,17 @@
 import type { AgentStatus, TaskStatus } from "@/types";
 
 export const agentStatusLabel: Record<AgentStatus, string> = {
-  idle: "Idle",
-  busy: "Busy",
-  offline: "Offline",
+  idle: "Ready",
+  busy: "On watch",
+  offline: "Stood down",
 };
 
 export const taskStatusLabel: Record<TaskStatus, string> = {
-  queued: "Queued",
-  assigned: "Assigned",
-  in_progress: "Running",
-  completed: "Done",
-  failed: "Failed",
+  queued: "Awaiting",
+  assigned: "Routed",
+  in_progress: "In transit",
+  completed: "Logged",
+  failed: "Lost",
 };
 
 export const taskStampClass: Record<TaskStatus, string> = {
@@ -19,13 +19,13 @@ export const taskStampClass: Record<TaskStatus, string> = {
   assigned: "stamp stamp-deep",
   in_progress: "stamp stamp-stamp",
   completed: "stamp stamp-sage",
-  failed: "stamp stamp-stamp stamp-double",
+  failed: "stamp stamp-rose stamp-double",
 };
 
 export const agentTypeLabel: Record<string, string> = {
-  research: "Research",
-  executor: "Executor",
-  router: "Router",
+  research: "Scout",
+  executor: "Operator",
+  router: "Quartermaster",
 };
 
 export const agentTypeBlurb: Record<string, string> = {

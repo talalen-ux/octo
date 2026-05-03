@@ -10,7 +10,7 @@ import {
   taskStatusLabel,
 } from "@/lib/labels";
 
-function ProgressBar({
+function ProgressArc({
   startedAt,
   duration = 5000,
 }: {
@@ -29,10 +29,15 @@ function ProgressBar({
     return () => cancelAnimationFrame(raf);
   }, [startedAt, duration]);
   return (
-    <div className="h-[2px] mt-2 relative bg-rule rounded overflow-hidden">
+    <div className="h-[2px] mt-2.5 relative bg-rule overflow-hidden">
       <div
         className="absolute inset-y-0 left-0 transition-[width]"
-        style={{ width: `${pct}%`, background: "var(--stamp)" }}
+        style={{
+          width: `${pct}%`,
+          background:
+            "linear-gradient(to right, var(--gold-deep), var(--gold))",
+          boxShadow: "0 0 8px var(--gold-glow)",
+        }}
       />
     </div>
   );
@@ -41,6 +46,7 @@ function ProgressBar({
 export default function TaskRow({
   task,
   agent,
+  index,
 }: {
   task: Task;
   agent?: Agent | null;
@@ -51,71 +57,92 @@ export default function TaskRow({
   return (
     <motion.article
       layout
-      initial={{ opacity: 0, y: 4 }}
+      initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: -6 }}
-      transition={{ type: "spring", stiffness: 240, damping: 26 }}
-      className="px-3 py-3 mb-2 rounded-md border border-rule bg-paper2 hover:border-ruleStrong transition-colors"
+      transition={{ type: "spring", stiffness: 230, damping: 26 }}
+      className="relative grid grid-cols-[28px_1fr] gap-2 pb-3 mb-3 border-b border-dashed border-ruleGold/55 last:border-b-0 last:mb-0"
     >
-      <div className="flex items-start justify-between gap-2">
-        <h4
-          className="display text-[13.5px] leading-snug"
-          style={{ fontWeight: 600 }}
-        >
-          {task.title}
-        </h4>
-        <span className={`${taskStampClass[task.status]} shrink-0`}>
-          {taskStatusLabel[task.status]}
-        </span>
-      </div>
-
-      <div className="mt-1 flex items-center justify-between gap-2 text-[11.5px] text-inkSoft">
-        <span>
-          {agent ? (
-            <>
-              <span className="text-inkMute">by </span>
-              {agent.name}
-            </>
-          ) : (
-            <span className="text-inkMute">unassigned</span>
-          )}
-        </span>
+      {typeof index === "number" && (
         <span
-          className="mono text-[10.5px] text-inkMute"
+          className="mono text-[10px] tracking-[0.18em] text-starFaint pt-[5px]"
           style={{ fontVariantNumeric: "tabular-nums" }}
         >
-          {relativeTime(task.createdAt)}
+          {String(index + 1).padStart(2, "0")}
         </span>
-      </div>
-
-      {task.requiredSkills.length > 0 && (
-        <div className="mt-2 flex flex-wrap gap-1">
-          {task.requiredSkills.map((s) => (
-            <span
-              key={s}
-              className="mono text-[10px] text-inkSoft px-1.5 py-0.5 rounded border border-rule bg-paper"
-            >
-              {s}
-            </span>
-          ))}
+      )}
+      <div>
+        <div className="flex items-baseline justify-between gap-2">
+          <h4
+            className="display-italic"
+            style={{
+              fontSize: 16.5,
+              lineHeight: 1.2,
+              color: "var(--star)",
+            }}
+          >
+            {task.title}
+          </h4>
+          <span className={`${taskStampClass[task.status]} shrink-0`}>
+            {taskStatusLabel[task.status]}
+          </span>
         </div>
-      )}
 
-      {task.status === "in_progress" && task.startedAt && (
-        <ProgressBar startedAt={task.startedAt} />
-      )}
+        <div className="mt-1 flex items-baseline justify-between gap-2 text-[11.5px] text-starSoft">
+          <span>
+            {agent ? (
+              <>
+                <span className="mono text-[9.5px] tracking-[0.18em] text-starMute mr-1">
+                  by
+                </span>
+                <span className="italic display-italic">{agent.name}</span>
+              </>
+            ) : (
+              <span className="text-starMute italic display-italic">
+                awaiting a free hand…
+              </span>
+            )}
+          </span>
+          <span
+            className="mono text-[10px] text-starMute"
+            style={{ fontVariantNumeric: "tabular-nums" }}
+          >
+            {relativeTime(task.createdAt)}
+          </span>
+        </div>
 
-      {isFinal && Boolean(task.result) && (
-        <blockquote
-          className={`mt-2 pl-3 border-l-2 ${
-            task.status === "failed"
-              ? "border-stamp text-stamp/90"
-              : "border-sage text-inkSoft"
-          } text-[12.5px] leading-snug`}
-        >
-          {summarizeResult(task.result)}
-        </blockquote>
-      )}
+        {task.requiredSkills.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1 items-center">
+            <span className="mono text-[9px] tracking-[0.18em] text-starFaint">
+              req
+            </span>
+            {task.requiredSkills.map((s) => (
+              <span
+                key={s}
+                className="mono text-[10px] tracking-wider text-starSoft px-1.5 py-0.5 border border-rule rounded-sm bg-voidDeep/60"
+              >
+                {s}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {task.status === "in_progress" && task.startedAt && (
+          <ProgressArc startedAt={task.startedAt} />
+        )}
+
+        {isFinal && Boolean(task.result) && (
+          <blockquote
+            className={`mt-2.5 pl-3 border-l ${
+              task.status === "failed"
+                ? "border-rose text-rose/90"
+                : "border-leaf text-star"
+            } text-[12.5px] italic leading-snug display-italic`}
+          >
+            {summarizeResult(task.result)}
+          </blockquote>
+        )}
+      </div>
     </motion.article>
   );
 }

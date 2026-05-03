@@ -6,11 +6,19 @@ import { useEffect, useRef, useState } from "react";
 type Tone = "ink" | "stamp" | "deep" | "sage" | "gold";
 
 const toneVar: Record<Tone, string> = {
-  ink: "var(--ink)",
-  stamp: "var(--stamp)",
-  deep: "var(--deep)",
-  sage: "var(--sage)",
+  ink: "var(--star)",
+  stamp: "var(--gold)",
+  deep: "var(--azure)",
+  sage: "var(--leaf)",
   gold: "var(--gold)",
+};
+
+const toneGlow: Record<Tone, string> = {
+  ink: "transparent",
+  stamp: "rgba(255,180,84,0.35)",
+  deep: "rgba(155,200,255,0.30)",
+  sage: "rgba(197,224,138,0.30)",
+  gold: "rgba(255,180,84,0.35)",
 };
 
 function AnimatedNumber({ value }: { value: number }) {
@@ -18,14 +26,21 @@ function AnimatedNumber({ value }: { value: number }) {
   const [display, setDisplay] = useState(value);
   useEffect(() => {
     const c = animate(mv, value, {
-      duration: 0.6,
+      duration: 0.7,
       ease: [0.2, 0.7, 0.2, 1],
       onUpdate: (v) => setDisplay(Math.round(v)),
     });
     return c.stop;
   }, [value, mv]);
   return (
-    <span style={{ fontVariantNumeric: "tabular-nums" }}>{display}</span>
+    <span
+      style={{
+        fontVariantNumeric: "tabular-nums",
+        fontFeatureSettings: '"onum"',
+      }}
+    >
+      {display}
+    </span>
   );
 }
 
@@ -34,6 +49,7 @@ export default function StatPill({
   value,
   tone = "ink",
   hint,
+  numeral,
 }: {
   label: string;
   value: number | string;
@@ -48,7 +64,7 @@ export default function StatPill({
   useEffect(() => {
     if (prev.current !== value) {
       setPulse(true);
-      const t = setTimeout(() => setPulse(false), 600);
+      const t = setTimeout(() => setPulse(false), 750);
       prev.current = value;
       return () => clearTimeout(t);
     }
@@ -56,28 +72,46 @@ export default function StatPill({
 
   return (
     <motion.div
-      animate={pulse ? { y: [0, -1, 0] } : { y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="relative px-4 py-3 bg-paper2"
+      animate={pulse ? { y: [0, -2, 0] } : { y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="relative px-4 pt-3 pb-3.5 bg-abyss"
     >
-      <div className="small-caps text-[10px] text-inkMute mb-1.5">
-        {label}
-      </div>
+      {numeral && (
+        <span className="absolute right-2.5 top-2 mono text-[9.5px] tracking-[0.2em] text-starFaint">
+          {numeral}
+        </span>
+      )}
+      <div className="label">{label}</div>
       <div
-        className="display leading-none"
+        className="display mt-1.5 leading-none"
         style={{
-          fontSize: 26,
-          fontWeight: 600,
+          fontSize: 38,
+          fontWeight: 400,
           color: toneVar[tone],
           letterSpacing: "-0.02em",
+          textShadow:
+            tone === "ink"
+              ? "none"
+              : `0 0 18px ${toneGlow[tone]}`,
         }}
       >
         {isNumber ? <AnimatedNumber value={value as number} /> : value}
       </div>
       {hint && (
-        <div className="mt-1.5 text-[11px] text-inkMute leading-snug">
+        <div className="mt-2 text-[11.5px] text-starMute italic display-italic leading-snug">
           {hint}
         </div>
+      )}
+      {pulse && (
+        <span
+          aria-hidden
+          className="pointer-events-none absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full"
+          style={{
+            background: toneVar[tone],
+            boxShadow: `0 0 12px ${toneVar[tone]}`,
+            animation: "twinkle 0.7s ease-out",
+          }}
+        />
       )}
     </motion.div>
   );

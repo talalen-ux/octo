@@ -5,50 +5,123 @@
 :root {
   color-scheme: dark;
 
-  --paper: #08090b;
-  --paper-2: #0e1013;
-  --paper-shade: #14171c;
-  --ink: #f4f5f7;
-  --ink-soft: #a1a4ac;
-  --ink-mute: #5b5f68;
-  --rule: #1f232a;
-  --rule-strong: #2a2f38;
-  --stamp: #ff5a4a;
-  --stamp-mute: #c43a2c;
-  --deep: #5aa9ff;
-  --gold: #e7b75a;
-  --sage: #4ed29a;
+  /* Atlas of Octans — celestial palette */
+  --void: #060814;
+  --void-deep: #03040a;
+  --abyss: #0b0e1c;
+  --abyss-2: #121632;
+  --abyss-3: #1a1f3d;
+
+  --star: #f6e7c4;
+  --star-soft: #b9ad8d;
+  --star-mute: #5e5740;
+  --star-faint: #3a3520;
+
+  --rule: #1c1f33;
+  --rule-strong: #2c3050;
+  --rule-gold: #3a3520;
+
+  --gold: #ffb454;          /* Alpha Centauri */
+  --gold-deep: #c98a3a;
+  --gold-glow: rgba(255, 180, 84, 0.35);
+
+  --azure: #9bc8ff;          /* Sirius */
+  --azure-deep: #4a78b8;
+
+  --leaf: #c5e08a;           /* Vega */
+  --rose: #ff7166;           /* Antares */
+  --violet: #b8a3ff;         /* Vela */
+
+  /* Aliases for legacy class hooks (paper/ink/etc) */
+  --paper: var(--void);
+  --paper-2: var(--abyss);
+  --paper-shade: var(--abyss-2);
+  --ink: var(--star);
+  --ink-soft: var(--star-soft);
+  --ink-mute: var(--star-mute);
+  --stamp: var(--gold);
+  --stamp-mute: var(--gold-deep);
+  --deep: var(--azure);
+  --sage: var(--leaf);
 }
 
 html,
 body {
-  background: var(--paper);
-  color: var(--ink);
+  background: var(--void-deep);
+  color: var(--star);
 }
 
 body {
-  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", Roboto, sans-serif;
-  font-feature-settings: "ss01", "cv11";
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-feature-settings: "ss01", "ss02", "cv02", "cv11";
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+
+  /* layered atmosphere: aurora glow, faint starfield, grain */
+  background-color: var(--void-deep);
+  background-image:
+    /* faint upper aurora */
+    radial-gradient(
+      120% 60% at 50% -10%,
+      rgba(155, 200, 255, 0.06) 0%,
+      transparent 55%
+    ),
+    /* warm horizon glow bottom-right */
+    radial-gradient(
+      80% 50% at 100% 110%,
+      rgba(255, 180, 84, 0.05) 0%,
+      transparent 50%
+    ),
+    /* sparse fixed starfield */
+    radial-gradient(1.2px 1.2px at 14% 22%, rgba(246, 231, 196, 0.55) 50%, transparent 60%),
+    radial-gradient(1px 1px at 78% 14%, rgba(246, 231, 196, 0.45) 50%, transparent 60%),
+    radial-gradient(1.6px 1.6px at 44% 8%, rgba(155, 200, 255, 0.6) 50%, transparent 60%),
+    radial-gradient(1px 1px at 8% 64%, rgba(246, 231, 196, 0.4) 50%, transparent 60%),
+    radial-gradient(1px 1px at 92% 48%, rgba(246, 231, 196, 0.35) 50%, transparent 60%),
+    radial-gradient(1.4px 1.4px at 62% 76%, rgba(255, 180, 84, 0.55) 50%, transparent 60%),
+    radial-gradient(1px 1px at 28% 88%, rgba(246, 231, 196, 0.35) 50%, transparent 60%),
+    radial-gradient(1.2px 1.2px at 70% 60%, rgba(246, 231, 196, 0.4) 50%, transparent 60%),
+    radial-gradient(0.9px 0.9px at 36% 40%, rgba(246, 231, 196, 0.3) 50%, transparent 60%),
+    radial-gradient(1px 1px at 52% 52%, rgba(155, 200, 255, 0.45) 50%, transparent 60%),
+    radial-gradient(1px 1px at 88% 82%, rgba(246, 231, 196, 0.35) 50%, transparent 60%),
+    /* deep velvet base */
+    radial-gradient(140% 100% at 50% 0%, var(--void) 0%, var(--void-deep) 70%);
+  background-attachment: fixed;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.96  0 0 0 0 0.91  0 0 0 0 0.77  0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.7'/></svg>");
+  background-size: 220px 220px;
+  mix-blend-mode: overlay;
+}
+
+main {
+  position: relative;
+  z-index: 1;
 }
 
 ::selection {
-  background: var(--stamp);
-  color: var(--paper);
+  background: var(--gold);
+  color: var(--void-deep);
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
 }
 ::-webkit-scrollbar-thumb {
   background: var(--rule-strong);
   border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--ink-mute);
+  background: var(--gold-deep);
 }
 ::-webkit-scrollbar-track {
   background: transparent;
@@ -57,85 +130,128 @@ body {
 /* ---- Component layer ----------------------------------------------------- */
 
 @layer components {
-  /* Headings — sans, tight tracking */
+  /* Display = Newsreader, italics where it counts */
   .display {
-    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    color: var(--ink);
+    font-family: var(--font-display), "Newsreader", Georgia, serif;
+    font-weight: 400;
+    letter-spacing: -0.005em;
+    color: var(--star);
+    font-feature-settings: "kern", "liga", "onum";
+  }
+  .display-italic {
+    font-family: var(--font-display), "Newsreader", Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.005em;
+    color: var(--star);
   }
   .display-soft {
-    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-    font-weight: 500;
-    letter-spacing: -0.01em;
+    font-family: var(--font-display), "Newsreader", Georgia, serif;
+    font-weight: 400;
+    color: var(--star-soft);
+  }
+
+  .label {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-weight: 400;
+    font-size: 10px;
+    color: var(--star-mute);
   }
   .small-caps {
     font-family: var(--font-mono), ui-monospace, monospace;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    font-weight: 500;
+    letter-spacing: 0.18em;
+    font-weight: 400;
   }
   .mono {
     font-family: var(--font-mono), ui-monospace, monospace;
-    font-feature-settings: "ss02", "zero", "tnum";
+    font-feature-settings: "ss01", "zero", "tnum";
   }
 
+  .hairline {
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--rule-gold) 12%,
+      var(--rule-gold) 88%,
+      transparent
+    );
+    height: 1px;
+  }
   .ink-rule {
-    background: var(--rule);
+    background: var(--rule-gold);
     height: 1px;
   }
   .double-rule {
-    border-top: 1px solid var(--rule);
+    border-top: 1px solid var(--rule-gold);
+    box-shadow: 0 3px 0 -2.4px var(--rule-gold);
   }
 
   /* Inputs */
   .field {
-    background: var(--paper-2);
+    background: rgba(11, 14, 28, 0.6);
     border: 1px solid var(--rule);
-    border-radius: 6px;
-    padding: 8px 10px;
-    color: var(--ink);
-    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    border-bottom-color: var(--rule-gold);
+    border-radius: 2px;
+    padding: 9px 11px;
+    color: var(--star);
+    font-family: var(--font-sans);
     font-size: 13px;
     width: 100%;
     outline: none;
-    transition: border-color 0.15s, background 0.15s;
+    transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
   }
   .field:hover {
     border-color: var(--rule-strong);
+    border-bottom-color: var(--gold-deep);
   }
   .field:focus {
-    border-color: var(--stamp);
-    background: var(--paper-shade);
+    border-color: var(--gold-deep);
+    background: rgba(18, 22, 50, 0.55);
+    box-shadow: 0 0 0 3px rgba(255, 180, 84, 0.06);
   }
   .field::placeholder {
-    color: var(--ink-mute);
+    color: var(--star-mute);
+    font-style: italic;
   }
 
-  /* Buttons */
+  /* Primary action — like an engraved brass plate */
   .btn-stamp {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.4rem;
-    background: var(--ink);
-    color: var(--paper);
-    padding: 8px 14px;
-    border: 1px solid var(--ink);
-    border-radius: 6px;
-    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-    font-size: 12.5px;
-    font-weight: 500;
-    letter-spacing: -0.005em;
-    transition: opacity 0.15s, background 0.15s;
+    gap: 0.5rem;
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 180, 84, 0.08),
+      rgba(255, 180, 84, 0.02)
+    );
+    color: var(--gold);
+    padding: 9px 18px;
+    border: 1px solid var(--gold-deep);
+    border-radius: 2px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
     cursor: pointer;
+    transition: background 0.18s, color 0.18s, border-color 0.18s,
+      box-shadow 0.2s;
   }
   .btn-stamp:hover {
-    opacity: 0.88;
+    background: var(--gold);
+    color: var(--void-deep);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 1px rgba(255, 180, 84, 0.35),
+      0 0 24px -4px rgba(255, 180, 84, 0.45);
   }
   .btn-stamp:disabled {
     opacity: 0.4;
     cursor: not-allowed;
+    box-shadow: none;
   }
 
   .btn-outline {
@@ -144,35 +260,37 @@ body {
     justify-content: center;
     gap: 0.4rem;
     background: transparent;
-    color: var(--ink-soft);
-    padding: 7px 12px;
-    border: 1px solid var(--rule);
-    border-radius: 6px;
-    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-    font-size: 12px;
+    color: var(--star-soft);
+    padding: 7px 13px;
+    border: 1px solid var(--rule-strong);
+    border-radius: 2px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    transition: color 0.18s, border-color 0.18s, background 0.18s;
   }
   .btn-outline:hover {
-    color: var(--ink);
-    border-color: var(--rule-strong);
-    background: var(--paper-2);
+    color: var(--star);
+    border-color: var(--gold-deep);
+    background: rgba(255, 180, 84, 0.04);
   }
 
-  /* Pill badges (formerly stamps) */
+  /* Status pill — a celestial badge */
   .stamp {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
     border: 1px solid currentColor;
-    padding: 1px 7px 2px;
+    padding: 1px 8px 2px;
     border-radius: 999px;
-    font-family: var(--font-mono), ui-monospace, monospace;
+    font-family: var(--font-mono);
     font-size: 9.5px;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     background: transparent;
-    line-height: 1.2;
+    line-height: 1.3;
   }
   .stamp::before {
     content: "";
@@ -180,55 +298,172 @@ body {
     height: 5px;
     border-radius: 999px;
     background: currentColor;
+    box-shadow: 0 0 8px currentColor;
   }
   .stamp-double {
-    box-shadow: inset 0 0 0 1px currentColor;
+    box-shadow: inset 0 0 0 1px currentColor,
+      0 0 0 2px rgba(255, 113, 102, 0.08);
   }
   .stamp-stamp {
-    color: var(--stamp);
-    background: rgba(255, 90, 74, 0.08);
-    border-color: rgba(255, 90, 74, 0.4);
+    color: var(--gold);
+    background: rgba(255, 180, 84, 0.06);
+    border-color: rgba(255, 180, 84, 0.45);
   }
   .stamp-deep {
-    color: var(--deep);
-    background: rgba(90, 169, 255, 0.08);
-    border-color: rgba(90, 169, 255, 0.4);
+    color: var(--azure);
+    background: rgba(155, 200, 255, 0.06);
+    border-color: rgba(155, 200, 255, 0.4);
   }
   .stamp-ink {
-    color: var(--ink-soft);
-    background: rgba(244, 245, 247, 0.04);
+    color: var(--star-soft);
+    background: rgba(246, 231, 196, 0.04);
     border-color: var(--rule-strong);
   }
   .stamp-sage {
-    color: var(--sage);
-    background: rgba(78, 210, 154, 0.08);
-    border-color: rgba(78, 210, 154, 0.4);
+    color: var(--leaf);
+    background: rgba(197, 224, 138, 0.06);
+    border-color: rgba(197, 224, 138, 0.4);
   }
   .stamp-gold {
     color: var(--gold);
-    background: rgba(231, 183, 90, 0.08);
-    border-color: rgba(231, 183, 90, 0.4);
+    background: rgba(255, 180, 84, 0.06);
+    border-color: rgba(255, 180, 84, 0.4);
+  }
+  .stamp-rose {
+    color: var(--rose);
+    background: rgba(255, 113, 102, 0.06);
+    border-color: rgba(255, 113, 102, 0.45);
   }
 
   .marker {
-    font-family: var(--font-mono), ui-monospace, monospace;
-    color: var(--ink-mute);
-    font-size: 11px;
-    letter-spacing: 0.08em;
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--gold);
   }
 
-  /* Panels */
+  /* Panels — an old book page mounted on a dark velvet table */
   .panel,
   .panel-soft {
-    background: var(--paper-2);
-    border: 1px solid var(--rule);
-    border-radius: 10px;
+    background:
+      linear-gradient(180deg, rgba(255, 180, 84, 0.025), transparent 35%),
+      var(--abyss);
+    border: 1px solid var(--rule-gold);
+    border-radius: 2px;
     position: relative;
+  }
+  .panel::after {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border: 1px solid var(--rule);
+    pointer-events: none;
+    opacity: 0.6;
+    border-radius: 1px;
+  }
+  .panel-soft::after {
+    display: none;
+  }
+
+  /* Coordinate label "RA 14h · Dec −78°" */
+  .coord {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold-deep);
+  }
+
+  /* Live blink for active values */
+  .pulse-dot {
+    animation: starPulse 2.4s ease-in-out infinite;
+  }
+
+  /* Constellation star */
+  .star-point {
+    fill: var(--star);
+    filter: drop-shadow(0 0 3px var(--gold-glow))
+      drop-shadow(0 0 1.5px rgba(246, 231, 196, 0.9));
+  }
+  .star-line {
+    stroke: var(--gold-deep);
+    stroke-width: 0.8;
+    stroke-dasharray: 2 3;
+    fill: none;
+    opacity: 0.6;
   }
 
   .typewriter::after {
-    content: "";
+    content: "▍";
+    margin-left: 2px;
+    color: var(--gold);
+    animation: cursor 1.05s steps(2, end) infinite;
   }
+}
+
+/* ---- Animations ---------------------------------------------------------- */
+
+@keyframes starPulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(0.85);
+  }
+}
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+@keyframes cursor {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+@keyframes constellationDraw {
+  from {
+    stroke-dashoffset: var(--len, 200);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes riseFade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes ruleSweep {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.constellation-line {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: constellationDraw 1.6s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+.constellation-star {
+  opacity: 0;
+  animation: riseFade 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+.twinkle {
+  animation: twinkle 3.2s ease-in-out infinite;
 }
 
 /* ---- React Flow override ------------------------------------------------- */
@@ -241,29 +476,29 @@ body {
   background: transparent;
 }
 .react-flow__edge-path {
-  stroke-width: 1.2;
+  stroke-width: 1.1;
 }
 .react-flow__attribution {
   display: none;
 }
 .react-flow__controls {
-  background: var(--paper-2) !important;
-  border: 1px solid var(--rule) !important;
-  border-radius: 6px !important;
+  background: var(--abyss) !important;
+  border: 1px solid var(--rule-gold) !important;
+  border-radius: 2px !important;
   box-shadow: none !important;
   overflow: hidden;
 }
 .react-flow__controls-button {
-  background: var(--paper-2) !important;
+  background: var(--abyss) !important;
   border: none !important;
   border-bottom: 1px solid var(--rule) !important;
-  color: var(--ink-soft) !important;
+  color: var(--star-soft) !important;
   width: 26px !important;
   height: 26px !important;
 }
 .react-flow__controls-button:hover {
-  background: var(--paper-shade) !important;
-  color: var(--ink) !important;
+  background: var(--abyss-2) !important;
+  color: var(--gold) !important;
 }
 .react-flow__controls-button svg {
   fill: currentColor !important;
@@ -281,13 +516,18 @@ body {
 /* Stagger reveal helper */
 .reveal > * {
   opacity: 0;
-  animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation: riseFade 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
-.reveal > *:nth-child(1) { animation-delay: 40ms; }
-.reveal > *:nth-child(2) { animation-delay: 100ms; }
-.reveal > *:nth-child(3) { animation-delay: 160ms; }
-.reveal > *:nth-child(4) { animation-delay: 220ms; }
-.reveal > *:nth-child(5) { animation-delay: 280ms; }
-.reveal > *:nth-child(6) { animation-delay: 340ms; }
-.reveal > *:nth-child(7) { animation-delay: 400ms; }
-.reveal > *:nth-child(8) { animation-delay: 460ms; }
+.reveal > *:nth-child(1) { animation-delay: 60ms; }
+.reveal > *:nth-child(2) { animation-delay: 160ms; }
+.reveal > *:nth-child(3) { animation-delay: 260ms; }
+.reveal > *:nth-child(4) { animation-delay: 360ms; }
+.reveal > *:nth-child(5) { animation-delay: 460ms; }
+.reveal > *:nth-child(6) { animation-delay: 560ms; }
+.reveal > *:nth-child(7) { animation-delay: 660ms; }
+.reveal > *:nth-child(8) { animation-delay: 760ms; }
+
+.rule-sweep {
+  transform-origin: left;
+  animation: ruleSweep 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}

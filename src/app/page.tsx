@@ -18,14 +18,16 @@ const SwarmGraph = dynamic(() => import("@/components/SwarmGraph"), {
   ssr: false,
   loading: () => (
     <div className="h-full w-full flex items-center justify-center">
-      <span className="mono text-[11px] text-inkMute">loading graph…</span>
+      <span className="display-italic text-starMute typewriter text-[20px]">
+        plotting the chart
+      </span>
     </div>
   ),
 });
 
 const DEMO = [
   {
-    title: "Summarize the morning markets",
+    title: "Summarise the morning markets",
     description: "A short brief on overnight moves.",
     requiredSkills: ["analysis"],
   },
@@ -47,30 +49,46 @@ const DEMO = [
 ];
 
 function SectionHead({
+  numeral,
   title,
+  coord,
   count,
   action,
 }: {
+  numeral: string;
   title: string;
+  coord?: string;
   count?: number | string;
   action?: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between mb-3">
-      <div className="flex items-baseline gap-2">
-        <h2 className="display text-[13px] text-ink" style={{ fontWeight: 600 }}>
+    <div className="flex items-baseline justify-between gap-3 mb-3">
+      <div className="flex items-baseline gap-3 min-w-0">
+        <span
+          className="display-italic shrink-0"
+          style={{ color: "var(--gold)", fontSize: 18 }}
+        >
+          {numeral}
+        </span>
+        <h2
+          className="display-italic truncate"
+          style={{ fontSize: 18, color: "var(--star)" }}
+        >
           {title}
         </h2>
+        {coord && <span className="coord hidden sm:inline">{coord}</span>}
+      </div>
+      <div className="flex items-baseline gap-3 shrink-0">
         {count !== undefined && (
           <span
-            className="mono text-[11px] text-inkMute"
+            className="mono text-[10.5px] tracking-[0.18em] text-starMute"
             style={{ fontVariantNumeric: "tabular-nums" }}
           >
-            {count}
+            № {count}
           </span>
         )}
+        {action}
       </div>
-      {action}
     </div>
   );
 }
@@ -122,60 +140,90 @@ export default function DashboardPage() {
       <Hero connected={connected} />
       <HowItWorks />
 
-      {/* Metrics */}
-      <section className="px-6 sm:px-10 pt-6 pb-2 border-b border-rule">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-px bg-rule rounded-md overflow-hidden border border-rule">
+      {/* Ledger figures — sextant readings */}
+      <section className="px-6 sm:px-10 pt-7 pb-3 border-b border-ruleGold">
+        <div className="flex items-baseline justify-between gap-3 mb-4">
+          <div className="flex items-baseline gap-3">
+            <span className="label">Tabula I</span>
+            <span className="coord hidden sm:inline">
+              Sextant readings · live
+            </span>
+          </div>
+          <span className="hairline flex-1 max-w-[60%] h-px self-center rule-sweep" />
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-px bg-ruleGold border border-ruleGold rounded-[2px] overflow-hidden"
+        >
           <StatPill
-            label="Agents"
+            numeral="i"
+            label="Hands enlisted"
             value={total}
             tone="ink"
-            hint={`${stats.idle} idle · ${stats.busy} busy`}
+            hint={`${stats.idle} ready · ${stats.busy} on watch`}
           />
           <StatPill
-            label="Busy"
+            numeral="ii"
+            label="On watch"
             value={stats.busy}
             tone="stamp"
             hint="agents currently engaged"
           />
           <StatPill
-            label="Queued"
+            numeral="iii"
+            label="Awaiting"
             value={stats.queued}
             tone="ink"
-            hint="tasks awaiting routing"
+            hint="orders queued for routing"
           />
           <StatPill
-            label="Running"
+            numeral="iv"
+            label="In transit"
             value={stats.inProgress}
             tone="deep"
-            hint="tasks in progress"
+            hint="orders being executed"
           />
           <StatPill
-            label="Completed"
+            numeral="v"
+            label="Logged"
             value={stats.completed}
             tone="sage"
-            hint="tasks done to date"
+            hint="orders delivered to date"
           />
           <StatPill
+            numeral="vi"
             label="Load"
             value={`${load}%`}
             tone="gold"
             hint="share of fleet engaged"
           />
-        </div>
+        </motion.div>
       </section>
 
-      {/* Main grid */}
-      <section className="grid grid-cols-12 gap-x-6 gap-y-6 px-6 sm:px-10 py-6">
-        {/* Left column */}
-        <aside className="col-span-12 lg:col-span-3 flex flex-col gap-6">
-          <section className="panel p-4">
-            <SectionHead title="New agent" />
+      {/* Main grid — asymmetric atlas spread */}
+      <section className="grid grid-cols-12 gap-x-7 gap-y-7 px-6 sm:px-10 py-8">
+        {/* Left column — Spawn + Hands */}
+        <aside className="col-span-12 lg:col-span-3 flex flex-col gap-7">
+          <section className="panel-soft p-5">
+            <SectionHead
+              numeral="§"
+              title="Enlist a hand"
+              coord="muster"
+            />
             <CreateAgentForm />
           </section>
 
           <section>
-            <SectionHead title="Agents" count={total} />
-            <div className="flex flex-col max-h-[58vh] overflow-y-auto rounded-md border border-rule">
+            <SectionHead
+              numeral="§"
+              title="The fleet"
+              coord="hands"
+              count={total}
+            />
+            <div className="flex flex-col rounded-sm border border-ruleGold max-h-[58vh] overflow-y-auto bg-abyss/40">
               <AnimatePresence initial={false}>
                 {agents.map((a) => (
                   <AgentCard
@@ -188,19 +236,21 @@ export default function DashboardPage() {
                 ))}
               </AnimatePresence>
               {agents.length === 0 && (
-                <div className="text-[12.5px] text-inkMute py-6 text-center">
-                  No agents yet. Add one above.
+                <div className="text-[13px] text-starMute italic py-7 text-center display-italic">
+                  No hands enlisted. Begin above.
                 </div>
               )}
             </div>
           </section>
         </aside>
 
-        {/* Center — Graph + Events */}
-        <section className="col-span-12 lg:col-span-6 flex flex-col gap-6">
-          <section className="panel p-4 min-h-[460px] flex flex-col">
+        {/* Center — Star chart + Telegraph */}
+        <section className="col-span-12 lg:col-span-6 flex flex-col gap-7">
+          <section className="panel p-5 min-h-[460px] flex flex-col">
             <SectionHead
-              title="Graph"
+              numeral="§"
+              title="Star chart"
+              coord="live wiring"
               action={
                 <button
                   onClick={runDemo}
@@ -211,31 +261,51 @@ export default function DashboardPage() {
                 </button>
               }
             />
-            <div className="flex-1 min-h-[400px] border border-rule rounded-md relative bg-paper overflow-hidden">
+            <div className="flex-1 min-h-[400px] border border-ruleGold rounded-sm relative overflow-hidden bg-voidDeep">
               <SwarmGraph snapshot={snapshot} />
+              {/* corner reticles */}
+              <span aria-hidden className="absolute top-2 left-2 w-3 h-3 border-l border-t border-goldDeep/70" />
+              <span aria-hidden className="absolute top-2 right-2 w-3 h-3 border-r border-t border-goldDeep/70" />
+              <span aria-hidden className="absolute bottom-2 left-2 w-3 h-3 border-l border-b border-goldDeep/70" />
+              <span aria-hidden className="absolute bottom-2 right-2 w-3 h-3 border-r border-b border-goldDeep/70" />
             </div>
-            <p className="mt-2 text-[11px] text-inkMute">
-              Tools (left) → agents (center) → tasks (right).
+            <p className="mt-3 text-[12px] text-starMute italic display-italic">
+              Fig. 1 — Instruments (left) supply hands (centre) as orders
+              (right) traverse the meridian.
             </p>
           </section>
 
-          <section className="panel p-4">
-            <SectionHead title="Events" count={events.length} />
-            <div className="max-h-44 overflow-y-auto">
+          <section className="panel-soft p-5">
+            <SectionHead
+              numeral="§"
+              title="Telegraph"
+              coord="signals · live"
+              count={events.length}
+            />
+            <div className="border-t border-ruleGold pt-2 max-h-44 overflow-y-auto">
               <EventFeed events={events} />
             </div>
           </section>
         </section>
 
-        {/* Right column */}
-        <aside className="col-span-12 lg:col-span-3 flex flex-col gap-6">
-          <section className="panel p-4">
-            <SectionHead title="New task" />
+        {/* Right — Lodge + In transit + Logged */}
+        <aside className="col-span-12 lg:col-span-3 flex flex-col gap-7">
+          <section className="panel-soft p-5">
+            <SectionHead
+              numeral="§"
+              title="Lodge an order"
+              coord="dispatch"
+            />
             <CreateTaskForm />
           </section>
 
           <section>
-            <SectionHead title="Active" count={active.length} />
+            <SectionHead
+              numeral="§"
+              title="In transit"
+              coord="active"
+              count={active.length}
+            />
             <div className="max-h-[42vh] overflow-y-auto pr-1 -mr-1">
               <AnimatePresence initial={false}>
                 {active.map((t, i) => (
@@ -250,15 +320,20 @@ export default function DashboardPage() {
                 ))}
               </AnimatePresence>
               {active.length === 0 && (
-                <div className="text-[12.5px] text-inkMute py-6 text-center">
-                  No active tasks.
+                <div className="text-[13px] text-starMute italic py-7 text-center display-italic">
+                  All quiet on the wire.
                 </div>
               )}
             </div>
           </section>
 
           <section>
-            <SectionHead title="Recent" count={filed.length} />
+            <SectionHead
+              numeral="§"
+              title="Logged"
+              coord="archive"
+              count={filed.length}
+            />
             <div className="max-h-72 overflow-y-auto pr-1 -mr-1">
               <AnimatePresence initial={false}>
                 {filed.map((t, i) => (
@@ -273,8 +348,8 @@ export default function DashboardPage() {
                 ))}
               </AnimatePresence>
               {filed.length === 0 && (
-                <div className="text-[12.5px] text-inkMute py-4 text-center">
-                  Nothing completed yet.
+                <div className="text-[13px] text-starMute italic py-5 text-center display-italic">
+                  Nothing logged yet.
                 </div>
               )}
             </div>
@@ -282,10 +357,13 @@ export default function DashboardPage() {
         </aside>
       </section>
 
-      <footer className="px-6 sm:px-10 py-4 border-t border-rule mt-auto">
-        <div className="flex items-center justify-between gap-2 mono text-[11px] text-inkMute">
-          <span>octo-swarm</span>
-          <span>simulated · v0.1</span>
+      <footer className="px-6 sm:px-10 py-5 border-t border-ruleGold mt-auto">
+        <div className="flex items-baseline justify-between gap-2 text-[10.5px] mono tracking-[0.18em] uppercase text-starMute">
+          <span>Octo·Swarm</span>
+          <span className="display-italic normal-case tracking-normal text-starSoft text-[14px]">
+            ❦ Logged in good faith. All transits simulated. ❦
+          </span>
+          <span>v0·1 — Folio I</span>
         </div>
       </footer>
     </main>

@@ -10,9 +10,9 @@ import {
 } from "@/lib/labels";
 
 const STATUS_COLOR: Record<string, string> = {
-  idle: "var(--sage)",
-  busy: "var(--stamp)",
-  offline: "var(--ink-mute)",
+  idle: "var(--leaf)",
+  busy: "var(--gold)",
+  offline: "var(--star-mute)",
 };
 
 const STATUS_STAMP: Record<string, string> = {
@@ -29,46 +29,58 @@ export default function AgentCard({
   current?: Task | null;
 }) {
   const onDuty = agent.status === "busy";
+  const color = STATUS_COLOR[agent.status];
   return (
     <motion.article
       layout
-      initial={{ opacity: 0, y: 4 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, x: -6 }}
+      animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.3, ease: [0.2, 0.7, 0.2, 1] }}
-      className="relative px-3 py-3 border-b border-rule last:border-b-0 hover:bg-paper2 transition-colors"
+      transition={{ duration: 0.4, ease: [0.2, 0.7, 0.2, 1] }}
+      className="relative pl-5 pr-3 py-3.5 border-b border-rule last:border-b-0 hover:bg-abyss2/40 transition-colors"
     >
-      <div className="flex items-center justify-between gap-2 mb-1">
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="relative inline-flex w-2 h-2 shrink-0">
-            <span
-              className="absolute inset-0 rounded-full"
-              style={{ background: STATUS_COLOR[agent.status] }}
-            />
-            {onDuty && (
-              <span
-                className="absolute inset-0 rounded-full animate-ping"
-                style={{ background: STATUS_COLOR[agent.status] }}
-              />
-            )}
-          </span>
-          <h4
-            className="display text-[13.5px] truncate"
-            style={{ fontWeight: 600 }}
-          >
-            {agent.name}
-          </h4>
-        </div>
-        <span className="mono text-[10px] text-inkMute shrink-0">
-          {shortId(agent.id)}
+      {/* Star + vertical thread */}
+      <span
+        aria-hidden
+        className="absolute left-2 top-3 bottom-3 w-px"
+        style={{
+          background: `linear-gradient(to bottom, ${color}, transparent)`,
+          opacity: 0.55,
+        }}
+      />
+      <span
+        aria-hidden
+        className="absolute left-[5px] top-[15px] w-[7px] h-[7px] rounded-full"
+        style={{
+          background: color,
+          boxShadow: `0 0 8px ${color}, 0 0 1px ${color}`,
+        }}
+      >
+        {onDuty && (
+          <span
+            className="absolute inset-0 rounded-full animate-ripple"
+            style={{ background: color }}
+          />
+        )}
+      </span>
+
+      <div className="flex items-baseline justify-between gap-2">
+        <h4
+          className="display-italic truncate"
+          style={{ fontSize: 18, color: "var(--star)" }}
+        >
+          {agent.name}
+        </h4>
+        <span className="mono text-[9.5px] tracking-[0.18em] text-starFaint shrink-0">
+          № {shortId(agent.id)}
         </span>
       </div>
 
-      <div className="flex items-center gap-2 text-[11.5px] text-inkSoft">
-        <span title={agentTypeBlurb[agent.type]}>
+      <div className="mt-0.5 flex items-baseline gap-2 text-[12px] text-starSoft">
+        <span className="italic display-italic" title={agentTypeBlurb[agent.type]}>
           {agentTypeLabel[agent.type]}
         </span>
-        <span className="text-rule">·</span>
+        <span className="text-starFaint">·</span>
         <span className={STATUS_STAMP[agent.status]}>
           {agentStatusLabel[agent.status]}
         </span>
@@ -79,7 +91,7 @@ export default function AgentCard({
           {agent.skills.slice(0, 6).map((s) => (
             <span
               key={s}
-              className="mono text-[10px] text-inkSoft px-1.5 py-0.5 rounded border border-rule bg-paper"
+              className="mono text-[10px] tracking-wider text-starSoft px-1.5 py-0.5 border border-rule rounded-sm bg-voidDeep/60"
             >
               {s}
             </span>
@@ -87,20 +99,20 @@ export default function AgentCard({
         </div>
       )}
 
-      <div className="mt-2 flex items-center gap-4 mono text-[10.5px] text-inkMute">
+      <div className="mt-2.5 flex items-center gap-4 mono text-[10.5px] text-starMute">
         <span>
-          trust{" "}
+          <span className="text-starFaint">trust </span>
           <span
-            className="text-inkSoft"
+            className="text-starSoft"
             style={{ fontVariantNumeric: "tabular-nums" }}
           >
             {Math.round(agent.reputation * 100)}
           </span>
         </span>
         <span>
-          done{" "}
+          <span className="text-starFaint">filed </span>
           <span
-            className="text-inkSoft"
+            className="text-starSoft"
             style={{ fontVariantNumeric: "tabular-nums" }}
           >
             {agent.completedCount}
@@ -113,10 +125,12 @@ export default function AgentCard({
           layout
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="mt-2 pt-2 border-t border-rule text-[12px] text-inkSoft leading-snug"
+          className="mt-2.5 pt-2 border-t border-dashed border-ruleGold/60 text-[12.5px] text-star leading-snug"
         >
-          <span className="mono text-[10px] text-stamp mr-2">running</span>
-          <span>{current.title}</span>
+          <span className="mono text-[9.5px] tracking-[0.18em] text-gold mr-2">
+            now
+          </span>
+          <span className="italic display-italic">{current.title}</span>
         </motion.div>
       )}
     </motion.article>

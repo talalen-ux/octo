@@ -57,7 +57,7 @@ export default function CreateTaskForm() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setErr(null);
-    if (!title.trim()) return setErr("Title is required.");
+    if (!title.trim()) return setErr("A title is required.");
     setBusy(true);
     try {
       await api("/api/tasks", {
@@ -72,16 +72,16 @@ export default function CreateTaskForm() {
       setDescription("");
       setSkills([]);
     } catch (ex: any) {
-      setErr(ex.message || "Could not submit task");
+      setErr(ex.message || "Could not file the order");
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-4">
+    <form onSubmit={submit} className="flex flex-col gap-5">
       <label className="block">
-        <span className="small-caps text-[10px] text-inkMute">Title</span>
+        <span className="label">Order title</span>
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -91,23 +91,19 @@ export default function CreateTaskForm() {
       </label>
 
       <label className="block">
-        <span className="small-caps text-[10px] text-inkMute">
-          Description
-        </span>
+        <span className="label">Particulars</span>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Optional context"
+          placeholder="A sentence or two of context, if needed."
           rows={2}
           className="field mt-1.5 resize-none"
         />
       </label>
 
       <div>
-        <span className="small-caps text-[10px] text-inkMute">
-          Required skills
-        </span>
-        <div className="mt-1.5 flex flex-wrap gap-1">
+        <span className="label">Skills required</span>
+        <div className="mt-2 flex flex-wrap gap-1.5">
           {SKILLS.map((s) => {
             const on = skills.includes(s);
             return (
@@ -116,12 +112,14 @@ export default function CreateTaskForm() {
                 key={s}
                 type="button"
                 onClick={() => toggle(s)}
-                className="mono text-[11px] px-2 py-1 rounded-md transition-colors"
+                className="mono text-[10.5px] tracking-[0.16em] uppercase px-2 py-1 rounded-sm transition-colors"
                 style={{
                   border: "1px solid",
-                  borderColor: on ? "var(--ink)" : "var(--rule)",
-                  background: on ? "var(--ink)" : "transparent",
-                  color: on ? "var(--paper)" : "var(--ink-soft)",
+                  borderColor: on ? "var(--gold)" : "var(--rule)",
+                  background: on
+                    ? "rgba(255,180,84,0.12)"
+                    : "transparent",
+                  color: on ? "var(--gold)" : "var(--star-soft)",
                 }}
               >
                 {s}
@@ -129,8 +127,8 @@ export default function CreateTaskForm() {
             );
           })}
         </div>
-        <p className="mt-1.5 text-[11.5px] text-inkMute">
-          The router will pick the best-matched agent.
+        <p className="mt-1.5 text-[11.5px] text-starMute italic display-italic">
+          The router pairs by skill match.
         </p>
       </div>
 
@@ -138,21 +136,21 @@ export default function CreateTaskForm() {
         <motion.div
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-[12px] text-stamp"
+          className="text-[12px] text-rose italic display-italic"
         >
-          {err}
+          ✕ {err}
         </motion.div>
       )}
 
       <div className="flex items-center gap-2">
         <button type="submit" disabled={busy} className="btn-stamp">
-          {busy ? "Submitting…" : "Submit task"}
+          {busy ? "Filing…" : "Lodge order"}
         </button>
         <button
           type="button"
           onClick={loadExample}
           className="btn-outline"
-          title="Insert a sample task"
+          title="Insert a sample order"
         >
           Sample
         </button>

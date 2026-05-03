@@ -47,41 +47,46 @@ export default function CreateAgentForm() {
       setName("");
       setSkills([]);
     } catch (ex: any) {
-      setErr(ex.message || "Could not create agent");
+      setErr(ex.message || "Could not enlist the agent");
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-4">
+    <form onSubmit={submit} className="flex flex-col gap-5">
       <label className="block">
-        <span className="small-caps text-[10px] text-inkMute">Name</span>
+        <span className="label">Agent name</span>
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Auto-generated if blank"
+          placeholder="leave blank for a number"
           className="field mt-1.5"
         />
       </label>
 
       <div>
-        <span className="small-caps text-[10px] text-inkMute">Role</span>
-        <div className="mt-1.5 grid grid-cols-3 gap-1">
+        <span className="label">Role</span>
+        <div className="mt-2 grid grid-cols-3 gap-1.5">
           {TYPES.map((t) => {
             const on = type === t;
             return (
               <motion.button
-                whileTap={{ scale: 0.97 }}
+                whileTap={{ scale: 0.96 }}
                 type="button"
                 key={t}
                 onClick={() => setType(t)}
-                className="text-[12px] px-2 py-1.5 rounded-md transition-colors"
+                className="display-italic px-2 py-2 text-[13px] transition-all rounded-sm"
                 style={{
                   border: "1px solid",
-                  borderColor: on ? "var(--ink)" : "var(--rule)",
-                  background: on ? "var(--ink)" : "transparent",
-                  color: on ? "var(--paper)" : "var(--ink-soft)",
+                  borderColor: on ? "var(--gold-deep)" : "var(--rule)",
+                  background: on
+                    ? "rgba(255,180,84,0.10)"
+                    : "transparent",
+                  color: on ? "var(--gold)" : "var(--star-soft)",
+                  boxShadow: on
+                    ? "inset 0 0 0 1px rgba(255,180,84,0.18)"
+                    : "none",
                 }}
               >
                 {agentTypeLabel[t]}
@@ -89,14 +94,14 @@ export default function CreateAgentForm() {
             );
           })}
         </div>
-        <p className="mt-1.5 text-[11.5px] text-inkMute">
+        <p className="mt-1.5 text-[11.5px] text-starMute italic display-italic">
           {agentTypeBlurb[type]}
         </p>
       </div>
 
       <div>
-        <span className="small-caps text-[10px] text-inkMute">Skills</span>
-        <div className="mt-1.5 flex flex-wrap gap-1">
+        <span className="label">Skills</span>
+        <div className="mt-2 flex flex-wrap gap-1.5">
           {SKILLS.map((s) => {
             const on = skills.includes(s);
             return (
@@ -105,12 +110,14 @@ export default function CreateAgentForm() {
                 type="button"
                 key={s}
                 onClick={() => toggle(s)}
-                className="mono text-[11px] px-2 py-1 rounded-md transition-colors"
+                className="mono text-[10.5px] tracking-[0.16em] uppercase px-2 py-1 rounded-sm transition-colors"
                 style={{
                   border: "1px solid",
-                  borderColor: on ? "var(--stamp)" : "var(--rule)",
-                  background: on ? "rgba(255,90,74,0.12)" : "transparent",
-                  color: on ? "var(--stamp)" : "var(--ink-soft)",
+                  borderColor: on ? "var(--gold)" : "var(--rule)",
+                  background: on
+                    ? "rgba(255,180,84,0.12)"
+                    : "transparent",
+                  color: on ? "var(--gold)" : "var(--star-soft)",
                 }}
               >
                 {s}
@@ -124,14 +131,14 @@ export default function CreateAgentForm() {
         <motion.div
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-[12px] text-stamp"
+          className="text-[12px] text-rose italic display-italic"
         >
-          {err}
+          ✕ {err}
         </motion.div>
       )}
 
       <button type="submit" disabled={busy} className="btn-stamp">
-        {busy ? "Creating…" : "Create agent"}
+        {busy ? "Enlisting…" : "Enlist agent"}
       </button>
     </form>
   );
