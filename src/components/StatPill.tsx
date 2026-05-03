@@ -15,10 +15,10 @@ const toneVar: Record<Tone, string> = {
 
 const toneGlow: Record<Tone, string> = {
   ink: "transparent",
-  stamp: "rgba(255,180,84,0.35)",
-  deep: "rgba(155,200,255,0.30)",
-  sage: "rgba(197,224,138,0.30)",
-  gold: "rgba(255,180,84,0.35)",
+  stamp: "rgba(94, 234, 212,0.35)",
+  deep: "rgba(94, 200, 234,0.30)",
+  sage: "rgba(159, 240, 204,0.30)",
+  gold: "rgba(94, 234, 212,0.35)",
 };
 
 function AnimatedNumber({ value }: { value: number }) {

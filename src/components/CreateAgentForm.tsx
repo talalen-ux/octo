@@ -81,11 +81,11 @@ export default function CreateAgentForm() {
                   border: "1px solid",
                   borderColor: on ? "var(--gold-deep)" : "var(--rule)",
                   background: on
-                    ? "rgba(255,180,84,0.10)"
+                    ? "rgba(94, 234, 212,0.10)"
                     : "transparent",
                   color: on ? "var(--gold)" : "var(--star-soft)",
                   boxShadow: on
-                    ? "inset 0 0 0 1px rgba(255,180,84,0.18)"
+                    ? "inset 0 0 0 1px rgba(94, 234, 212,0.18)"
                     : "none",
                 }}
               >
@@ -115,7 +115,7 @@ export default function CreateAgentForm() {
                   border: "1px solid",
                   borderColor: on ? "var(--gold)" : "var(--rule)",
                   background: on
-                    ? "rgba(255,180,84,0.12)"
+                    ? "rgba(94, 234, 212,0.12)"
                     : "transparent",
                   color: on ? "var(--gold)" : "var(--star-soft)",
                 }}

@@ -117,7 +117,7 @@ export default function CreateTaskForm() {
                   border: "1px solid",
                   borderColor: on ? "var(--gold)" : "var(--rule)",
                   background: on
-                    ? "rgba(255,180,84,0.12)"
+                    ? "rgba(94, 234, 212,0.12)"
                     : "transparent",
                   color: on ? "var(--gold)" : "var(--star-soft)",
                 }}

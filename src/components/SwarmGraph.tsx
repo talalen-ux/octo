@@ -13,19 +13,19 @@ import "reactflow/dist/style.css";
 import type { Snapshot, Agent, Task } from "@/types";
 import { agentStatusLabel, agentTypeLabel, taskStatusLabel } from "@/lib/labels";
 
-const STAR = "#f6e7c4";
-const STAR_SOFT = "#b9ad8d";
-const STAR_MUTE = "#5e5740";
-const STAR_FAINT = "#3a3520";
-const VOID = "#060814";
-const VOID_DEEP = "#03040a";
-const ABYSS = "#0b0e1c";
-const RULE = "#1c1f33";
-const RULE_GOLD = "#3a3520";
-const GOLD = "#ffb454";
-const AZURE = "#9bc8ff";
-const LEAF = "#c5e08a";
-const ROSE = "#ff7166";
+const STAR = "#5eead4";
+const STAR_SOFT = "#3dbfaa";
+const STAR_MUTE = "#2a7a6b";
+const STAR_FAINT = "#163e36";
+const VOID = "#030605";
+const VOID_DEEP = "#000000";
+const ABYSS = "#060e0c";
+const RULE = "#102420";
+const RULE_GOLD = "#1f4540";
+const GOLD = "#5eead4";
+const AZURE = "#5ec8ea";
+const LEAF = "#9ff0cc";
+const ROSE = "#ff5e8e";
 
 function agentColor(a: Agent): string {
   if (a.status === "offline") return STAR_MUTE;
@@ -278,7 +278,7 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
         width: 234,
         border: `1px solid ${busy ? GOLD : RULE_GOLD}`,
         boxShadow: busy
-          ? `0 0 0 1px rgba(255,180,84,0.18), 0 0 24px -4px rgba(255,180,84,0.35)`
+          ? `0 0 0 1px rgba(94, 234, 212,0.18), 0 0 24px -4px rgba(94, 234, 212,0.35)`
           : "none",
       },
     });
@@ -347,7 +347,7 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
         width: 224,
         border: `1px solid ${running ? GOLD : RULE_GOLD}`,
         boxShadow: running
-          ? `0 0 18px -4px rgba(255,180,84,0.35)`
+          ? `0 0 18px -4px rgba(94, 234, 212,0.35)`
           : "none",
       },
     });

@@ -40,9 +40,9 @@ function Constellation() {
     >
       <defs>
         <radialGradient id="halo" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="rgba(255,180,84,0.55)" />
-          <stop offset="60%" stopColor="rgba(255,180,84,0.08)" />
-          <stop offset="100%" stopColor="rgba(255,180,84,0)" />
+          <stop offset="0%" stopColor="rgba(94, 234, 212,0.55)" />
+          <stop offset="60%" stopColor="rgba(94, 234, 212,0.08)" />
+          <stop offset="100%" stopColor="rgba(94, 234, 212,0)" />
         </radialGradient>
       </defs>
 
