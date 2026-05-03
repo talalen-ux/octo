@@ -12,6 +12,7 @@ const config: Config = {
         inkSoft: "var(--ink-soft)",
         inkMute: "var(--ink-mute)",
         rule: "var(--rule)",
+        ruleStrong: "var(--rule-strong)",
         stamp: "var(--stamp)",
         stampMute: "var(--stamp-mute)",
         deep: "var(--deep)",
@@ -19,8 +20,9 @@ const config: Config = {
         sage: "var(--sage)",
       },
       fontFamily: {
-        display: ["var(--font-display)", "Georgia", "serif"],
-        serif: ["var(--font-display)", "Georgia", "serif"],
+        sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
+        serif: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
       fontFeatureSettings: {

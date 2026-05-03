@@ -1,26 +1,24 @@
 import type { Metadata } from "next";
-import { Fraunces, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const fraunces = Fraunces({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-display",
-  axes: ["SOFT", "WONK", "opsz"],
+  variable: "--font-sans",
   display: "swap",
-  style: ["normal", "italic"],
 });
 
 const mono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
   display: "swap",
-  weight: ["400", "500", "700"],
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
-  title: "Octo Swarm — Operations Log",
+  title: "Octo Swarm",
   description:
-    "A live ledger of an autonomous agent fleet — tasks dispatched, picked up, and resolved in real time.",
+    "Live dashboard for an autonomous agent fleet — tasks dispatched, picked up, and resolved in real time.",
 };
 
 export default function RootLayout({
@@ -29,10 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="en"
-      className={`${fraunces.variable} ${mono.variable}`}
-    >
+    <html lang="en" className={`${inter.variable} ${mono.variable}`}>
       <body className="antialiased min-h-screen">{children}</body>
     </html>
   );

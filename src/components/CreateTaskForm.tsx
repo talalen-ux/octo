@@ -57,7 +57,7 @@ export default function CreateTaskForm() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setErr(null);
-    if (!title.trim()) return setErr("A title is required.");
+    if (!title.trim()) return setErr("Title is required.");
     setBusy(true);
     try {
       await api("/api/tasks", {
@@ -72,44 +72,42 @@ export default function CreateTaskForm() {
       setDescription("");
       setSkills([]);
     } catch (ex: any) {
-      setErr(ex.message || "Could not file the order");
+      setErr(ex.message || "Could not submit task");
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-5">
+    <form onSubmit={submit} className="flex flex-col gap-4">
       <label className="block">
-        <span className="mono small-caps text-[9.5px] text-inkMute">
-          Order title
-        </span>
+        <span className="small-caps text-[10px] text-inkMute">Title</span>
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Find the best ETH liquidity pools"
-          className="field mt-1"
+          className="field mt-1.5"
         />
       </label>
 
       <label className="block">
-        <span className="mono small-caps text-[9.5px] text-inkMute">
-          Particulars
+        <span className="small-caps text-[10px] text-inkMute">
+          Description
         </span>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="A sentence or two of context, if needed."
+          placeholder="Optional context"
           rows={2}
-          className="field mt-1 resize-none"
+          className="field mt-1.5 resize-none"
         />
       </label>
 
       <div>
-        <span className="mono small-caps text-[9.5px] text-inkMute">
-          Skills required
+        <span className="small-caps text-[10px] text-inkMute">
+          Required skills
         </span>
-        <div className="mt-2 flex flex-wrap gap-1.5">
+        <div className="mt-1.5 flex flex-wrap gap-1">
           {SKILLS.map((s) => {
             const on = skills.includes(s);
             return (
@@ -118,11 +116,12 @@ export default function CreateTaskForm() {
                 key={s}
                 type="button"
                 onClick={() => toggle(s)}
-                className="mono text-[10.5px] tracking-[0.16em] uppercase px-2 py-1 transition-all"
+                className="mono text-[11px] px-2 py-1 rounded-md transition-colors"
                 style={{
-                  border: "1px solid var(--ink)",
+                  border: "1px solid",
+                  borderColor: on ? "var(--ink)" : "var(--rule)",
                   background: on ? "var(--ink)" : "transparent",
-                  color: on ? "var(--paper)" : "var(--ink)",
+                  color: on ? "var(--paper)" : "var(--ink-soft)",
                 }}
               >
                 {s}
@@ -130,8 +129,8 @@ export default function CreateTaskForm() {
             );
           })}
         </div>
-        <p className="mt-1.5 text-[11px] text-inkMute italic">
-          The Quartermaster routes by skill match.
+        <p className="mt-1.5 text-[11.5px] text-inkMute">
+          The router will pick the best-matched agent.
         </p>
       </div>
 
@@ -139,21 +138,21 @@ export default function CreateTaskForm() {
         <motion.div
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-[12px] text-stamp italic"
+          className="text-[12px] text-stamp"
         >
-          ✕ {err}
+          {err}
         </motion.div>
       )}
 
-      <div className="flex items-center gap-2 pt-1">
+      <div className="flex items-center gap-2">
         <button type="submit" disabled={busy} className="btn-stamp">
-          {busy ? "Filing…" : "Lodge order"}
+          {busy ? "Submitting…" : "Submit task"}
         </button>
         <button
           type="button"
           onClick={loadExample}
           className="btn-outline"
-          title="Insert a sample order"
+          title="Insert a sample task"
         >
           Sample
         </button>

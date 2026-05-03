@@ -18,22 +18,14 @@ function AnimatedNumber({ value }: { value: number }) {
   const [display, setDisplay] = useState(value);
   useEffect(() => {
     const c = animate(mv, value, {
-      duration: 0.7,
+      duration: 0.6,
       ease: [0.2, 0.7, 0.2, 1],
       onUpdate: (v) => setDisplay(Math.round(v)),
     });
     return c.stop;
   }, [value, mv]);
   return (
-    <span
-      className="mono"
-      style={{
-        fontFeatureSettings: '"tnum" 1, "lnum" 1',
-        fontVariantNumeric: "tabular-nums",
-      }}
-    >
-      {display}
-    </span>
+    <span style={{ fontVariantNumeric: "tabular-nums" }}>{display}</span>
   );
 }
 
@@ -42,7 +34,6 @@ export default function StatPill({
   value,
   tone = "ink",
   hint,
-  numeral,
 }: {
   label: string;
   value: number | string;
@@ -57,7 +48,7 @@ export default function StatPill({
   useEffect(() => {
     if (prev.current !== value) {
       setPulse(true);
-      const t = setTimeout(() => setPulse(false), 700);
+      const t = setTimeout(() => setPulse(false), 600);
       prev.current = value;
       return () => clearTimeout(t);
     }
@@ -65,25 +56,18 @@ export default function StatPill({
 
   return (
     <motion.div
-      animate={pulse ? { y: [0, -2, 0] } : { y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="relative px-1 py-3 border-l border-ink/40 first:border-l-0 first:pl-0"
+      animate={pulse ? { y: [0, -1, 0] } : { y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="relative px-4 py-3 bg-paper2"
     >
-      {numeral && (
-        <span
-          className="absolute right-2 top-1 mono small-caps text-[9px] text-inkMute"
-        >
-          {numeral}
-        </span>
-      )}
-      <div className="mono small-caps text-[9.5px] text-inkSoft mb-1">
+      <div className="small-caps text-[10px] text-inkMute mb-1.5">
         {label}
       </div>
       <div
         className="display leading-none"
         style={{
-          fontVariationSettings: '"opsz" 144, "WONK" 1',
-          fontSize: 42,
+          fontSize: 26,
+          fontWeight: 600,
           color: toneVar[tone],
           letterSpacing: "-0.02em",
         }}
@@ -91,15 +75,9 @@ export default function StatPill({
         {isNumber ? <AnimatedNumber value={value as number} /> : value}
       </div>
       {hint && (
-        <div className="mt-1.5 text-[11px] text-inkMute italic leading-snug">
+        <div className="mt-1.5 text-[11px] text-inkMute leading-snug">
           {hint}
         </div>
-      )}
-      {pulse && (
-        <span
-          aria-hidden
-          className="pointer-events-none absolute -top-1 -right-1 w-2 h-2 rounded-full bg-stamp animate-ripple"
-        />
       )}
     </motion.div>
   );

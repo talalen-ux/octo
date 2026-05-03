@@ -1,92 +1,62 @@
 "use client";
 
-import { motion } from "framer-motion";
-
-function todayString() {
-  return new Date().toLocaleDateString(undefined, {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-}
-
 export default function Hero({ connected }: { connected: boolean }) {
   return (
-    <header className="relative px-6 sm:px-10 pt-10 pb-6 border-b border-ink">
-      {/* Top rule with edition mark */}
-      <div className="flex items-center justify-between text-[10px] mono small-caps text-inkSoft mb-6">
-        <span>No. 001 — Operations Edition</span>
-        <span suppressHydrationWarning>{todayString()}</span>
-        <span className="flex items-center gap-2">
+    <header className="px-6 sm:px-10 pt-8 pb-6 border-b border-rule">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-7 h-7 rounded-md border border-rule flex items-center justify-center bg-paper2">
+            <span
+              className="block w-2.5 h-2.5 rounded-sm"
+              style={{ background: "var(--stamp)" }}
+            />
+          </div>
+          <div className="flex items-baseline gap-2.5">
+            <h1
+              className="display text-[18px] tracking-tight"
+              style={{ fontWeight: 600 }}
+            >
+              Octo Swarm
+            </h1>
+            <span className="mono text-[11px] text-inkMute">v0.1</span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 mono text-[11px] text-inkSoft">
           <span
-            className={`relative inline-flex w-2.5 h-2.5 ${
+            className={`relative inline-flex w-2 h-2 ${
               connected ? "" : "opacity-40"
             }`}
           >
             <span
-              className={`absolute inset-0 rounded-full ${
-                connected ? "bg-stamp" : "bg-inkMute"
-              }`}
+              className="absolute inset-0 rounded-full"
+              style={{ background: connected ? "var(--sage)" : "var(--ink-mute)" }}
             />
             {connected && (
-              <span className="absolute inset-0 rounded-full bg-stamp animate-ripple" />
+              <span
+                className="absolute inset-0 rounded-full animate-ping"
+                style={{ background: "var(--sage)" }}
+              />
             )}
           </span>
-          {connected ? "Wire open" : "Wire closed"}
-        </span>
-      </div>
-
-      {/* Masthead */}
-      <div className="grid grid-cols-12 gap-6 items-end">
-        <div className="col-span-12 md:col-span-9">
-          <motion.h1
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.2, 0.7, 0.2, 1] }}
-            className="display leading-[0.92] text-ink"
-            style={{
-              fontVariationSettings: '"opsz" 144, "WONK" 1, "SOFT" 0',
-              fontSize: "clamp(48px, 9vw, 132px)",
-              fontWeight: 600,
-              letterSpacing: "-0.035em",
-            }}
-          >
-            Octo<span className="italic" style={{ color: "var(--stamp)" }}>·</span>Swarm
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-3 max-w-2xl text-[19px] leading-snug text-inkSoft"
-            style={{
-              fontVariationSettings: '"opsz" 24, "SOFT" 30',
-            }}
-          >
-            <span className="italic">A live ledger of an autonomous agent fleet.</span>
-            {" "}
-            Tasks are dispatched, picked up by available hands, and resolved with
-            the tools at port — every move recorded as it happens.
-          </motion.p>
+          <span>{connected ? "Connected" : "Disconnected"}</span>
         </div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.45 }}
-          className="col-span-12 md:col-span-3 flex md:justify-end"
-        >
-          <div
-            className="stamp stamp-double stamp-stamp animate-stamp"
-            style={{ animationDelay: "500ms" }}
-          >
-            <span>Field Bulletin</span>
-          </div>
-        </motion.div>
       </div>
 
-      {/* Bottom double rule */}
-      <div className="mt-8 double-rule origin-left animate-rule" />
+      <div className="mt-8 max-w-2xl">
+        <h2
+          className="display text-[34px] sm:text-[44px] leading-[1.05] tracking-tight"
+          style={{ fontWeight: 600 }}
+        >
+          A live dashboard for an
+          <br />
+          autonomous agent fleet.
+        </h2>
+        <p className="mt-3 text-[14px] text-inkSoft leading-relaxed max-w-xl">
+          Tasks are dispatched, picked up by available agents, and resolved
+          with the tools at hand — every event recorded as it happens.
+        </p>
+      </div>
     </header>
   );
 }
