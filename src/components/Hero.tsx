@@ -11,127 +11,75 @@ function todayString() {
 }
 
 /**
- * Octans — five-star southern constellation.
- * Coordinates are normalized 0..1 within the SVG viewBox (240 × 200).
+ * Code-symbol octopus — an ASCII glyph made of programmer punctuation,
+ * drawn line-by-line on load with a soft cyan halo.
  */
-const OCTANS = [
-  { id: "ν", x: 36, y: 122, r: 2.6, label: "ν Oct" },
-  { id: "β", x: 92, y: 58, r: 3.4, label: "β Oct" },
-  { id: "δ", x: 142, y: 96, r: 2.9, label: "δ Oct" },
-  { id: "ε", x: 196, y: 52, r: 2.4, label: "ε Oct" },
-  { id: "σ", x: 118, y: 168, r: 4.2, label: "σ Oct · pole" },
+// Each line is 27 visual chars wide for clean monospace alignment.
+const OCTOPUS_LINES = [
+  "        ___________        ",
+  "       /           \\       ",
+  "      |  </>   </>  |      ",
+  "      |     ___     |      ",
+  "       \\   |___|   /       ",
+  "        \\_________/        ",
+  "        /| | | | |\\        ",
+  "       / | | | | | \\       ",
+  "      ;  | | | | |  ;      ",
+  "     ;   | | | | |   ;     ",
+  "    /    | | | | |    \\    ",
+  "   ;    /| | | | |\\    ;   ",
+  "  ;    / | | | | | \\    ;  ",
+  "  |   ;  | | | | |  ;   |  ",
+  "  ;   ;  | | | | |  ;   ;  ",
+  "   \\   \\ | | | | | /   /   ",
+  "    \\   \\ \\ | | / /   /    ",
+  "     \\___\\\\\\|||///___/     ",
+  "          '''   '''         ",
 ];
 
-const EDGES: Array<[number, number]> = [
-  [0, 1],
-  [1, 2],
-  [2, 3],
-  [2, 4],
-  [4, 0],
-];
-
-function Constellation() {
+function CodeOctopus() {
   return (
-    <svg
-      viewBox="0 0 240 200"
-      className="w-full h-full"
-      role="img"
-      aria-label="Octans constellation"
-    >
-      <defs>
-        <radialGradient id="halo" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="rgba(94, 234, 212,0.55)" />
-          <stop offset="60%" stopColor="rgba(94, 234, 212,0.08)" />
-          <stop offset="100%" stopColor="rgba(94, 234, 212,0)" />
-        </radialGradient>
-      </defs>
-
-      {/* concentric celestial coordinate rings */}
-      <g
-        stroke="var(--rule-gold)"
-        strokeWidth="0.5"
-        fill="none"
-        opacity="0.55"
+    <div className="absolute inset-0 flex items-center justify-center">
+      {/* faint cyan halo behind the glyph */}
+      <span
+        aria-hidden
+        className="absolute w-[80%] h-[80%] rounded-full"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(94,234,212,0.16) 0%, rgba(94,234,212,0.04) 45%, transparent 70%)",
+          filter: "blur(2px)",
+        }}
+      />
+      <pre
+        aria-label="Octopus, made of code symbols"
+        className="mono relative select-none"
+        style={{
+          color: "var(--gold)",
+          fontSize: 9,
+          lineHeight: "10px",
+          letterSpacing: "0.02em",
+          textShadow:
+            "0 0 6px rgba(94,234,212,0.55), 0 0 1px rgba(94,234,212,0.9)",
+          margin: 0,
+          padding: 0,
+          fontVariantLigatures: "none",
+        }}
       >
-        <circle cx="118" cy="168" r="22" />
-        <circle cx="118" cy="168" r="46" strokeDasharray="1 3" />
-        <circle cx="118" cy="168" r="80" strokeDasharray="1 3" />
-      </g>
-
-      {/* declination crosshair */}
-      <g
-        stroke="var(--rule-gold)"
-        strokeWidth="0.4"
-        opacity="0.45"
-        strokeDasharray="2 4"
-      >
-        <line x1="118" y1="158" x2="118" y2="178" />
-        <line x1="108" y1="168" x2="128" y2="168" />
-      </g>
-
-      {/* connecting hairlines (drawn in) */}
-      {EDGES.map(([a, b], i) => {
-        const A = OCTANS[a];
-        const B = OCTANS[b];
-        const len = Math.hypot(A.x - B.x, A.y - B.y);
-        return (
-          <line
-            key={`e${i}`}
-            x1={A.x}
-            y1={A.y}
-            x2={B.x}
-            y2={B.y}
-            className="constellation-line"
-            style={
-              {
-                stroke: "var(--gold-deep)",
-                strokeWidth: 0.7,
-                strokeDasharray: `${len}`,
-                strokeDashoffset: len,
-                ["--len" as string]: len.toFixed(1),
-                animationDelay: `${300 + i * 130}ms`,
-              } as React.CSSProperties
-            }
-          />
-        );
-      })}
-
-      {/* stars + halos */}
-      {OCTANS.map((s, i) => (
-        <g
-          key={s.id}
-          className="constellation-star"
-          style={{ animationDelay: `${i * 120}ms` }}
-        >
-          <circle cx={s.x} cy={s.y} r={s.r * 4} fill="url(#halo)" />
-          <circle cx={s.x} cy={s.y} r={s.r} className="star-point" />
-          <circle
-            cx={s.x}
-            cy={s.y}
-            r={s.r * 0.45}
-            fill="var(--void-deep)"
-            opacity="0.55"
-          />
-        </g>
-      ))}
-
-      {/* labels in italic serif */}
-      {OCTANS.map((s, i) => (
-        <text
-          key={`t${s.id}`}
-          x={s.x + s.r + 5}
-          y={s.y + 3}
-          fontSize="7.5"
-          fontStyle="italic"
-          fill="var(--star-mute)"
-          fontFamily="var(--font-display)"
-          className="constellation-star"
-          style={{ animationDelay: `${600 + i * 120}ms` }}
-        >
-          {s.label}
-        </text>
-      ))}
-    </svg>
+        {OCTOPUS_LINES.map((line, i) => (
+          <span
+            key={i}
+            className="constellation-star block"
+            style={{
+              animationDelay: `${i * 70}ms`,
+              whiteSpace: "pre",
+              opacity: 0.92,
+            }}
+          >
+            {line}
+          </span>
+        ))}
+      </pre>
+    </div>
   );
 }
 
@@ -260,11 +208,14 @@ export default function Hero({ connected }: { connected: boolean }) {
           <figure className="w-[260px] aspect-[6/5] relative">
             <div className="absolute inset-0 border border-ruleGold/70 rounded-sm pointer-events-none" />
             <div className="absolute inset-2 border border-rule pointer-events-none" />
-            <div className="absolute inset-0 p-3">
-              <Constellation />
-            </div>
+            {/* corner reticles */}
+            <span aria-hidden className="absolute top-1.5 left-1.5 w-2.5 h-2.5 border-l border-t border-gold/70" />
+            <span aria-hidden className="absolute top-1.5 right-1.5 w-2.5 h-2.5 border-r border-t border-gold/70" />
+            <span aria-hidden className="absolute bottom-1.5 left-1.5 w-2.5 h-2.5 border-l border-b border-gold/70" />
+            <span aria-hidden className="absolute bottom-1.5 right-1.5 w-2.5 h-2.5 border-r border-b border-gold/70" />
+            <CodeOctopus />
             <figcaption className="absolute -bottom-5 right-0 coord">
-              Pl. I · Octans
+              Pl. I · &lt;/octopus&gt;
             </figcaption>
           </figure>
         </motion.aside>
