@@ -12,8 +12,8 @@ function todayString() {
 
 export default function Hero({ connected }: { connected: boolean }) {
   return (
-    <header className="relative px-6 sm:px-10 pt-5 pb-5 border-b border-ruleGold">
-      <div className="flex items-center justify-between gap-4">
+    <header className="relative px-4 sm:px-6 lg:px-10 pt-4 pb-4 sm:pt-5 sm:pb-5 border-b border-ruleGold">
+      <div className="flex items-center justify-between gap-3 sm:gap-4">
         <Link href="/" className="flex items-center gap-3 group">
           <span
             aria-hidden
@@ -31,16 +31,16 @@ export default function Hero({ connected }: { connected: boolean }) {
               }}
             />
           </span>
-          <span className="display text-[18px] tracking-tight text-star group-hover:text-gold transition-colors">
+          <span className="display text-[17px] sm:text-[18px] tracking-tight text-star group-hover:text-gold transition-colors">
             Octo·Swarm
           </span>
-          <span className="mono text-[10px] tracking-[0.18em] uppercase text-starMute">
+          <span className="mono text-[10px] tracking-[0.18em] uppercase text-starMute hidden sm:inline">
             console
           </span>
         </Link>
 
-        <div className="flex items-center gap-5 mono text-[10.5px] text-starMute">
-          <span suppressHydrationWarning className="hidden sm:inline tracking-[0.16em] uppercase">
+        <div className="flex items-center gap-3 sm:gap-5 mono text-[10.5px] text-starMute">
+          <span suppressHydrationWarning className="hidden md:inline tracking-[0.16em] uppercase">
             {todayString()}
           </span>
           <span className="flex items-center gap-2">
@@ -64,7 +64,8 @@ export default function Hero({ connected }: { connected: boolean }) {
                 connected ? "text-leaf" : "text-starMute"
               }`}
             >
-              {connected ? "Wire open" : "Wire closed"}
+              <span className="sm:hidden">{connected ? "Live" : "Off"}</span>
+              <span className="hidden sm:inline">{connected ? "Wire open" : "Wire closed"}</span>
             </span>
           </span>
         </div>

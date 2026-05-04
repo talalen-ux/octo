@@ -389,12 +389,16 @@ export default function SwarmGraph({ snapshot }: { snapshot: Snapshot }) {
         edges={edges}
         fitView
         fitViewOptions={{ padding: 0.18 }}
-        minZoom={0.3}
+        minZoom={0.25}
         maxZoom={1.6}
         nodesConnectable={false}
         elementsSelectable={false}
+        nodesDraggable={false}
         zoomOnScroll
+        zoomOnPinch
         panOnDrag
+        panOnScroll={false}
+        preventScrolling={false}
         proOptions={{ hideAttribution: true }}
       >
         {/* faint celestial dot grid */}

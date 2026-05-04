@@ -126,7 +126,7 @@ export default function ConsolePage() {
       <Hero connected={connected} />
 
       {/* ── Overview stats — sits as a thin band above the graph hero ─── */}
-      <section className="px-6 sm:px-10 pt-4 pb-3">
+      <section className="px-4 sm:px-6 lg:px-10 pt-4 pb-3">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -145,7 +145,7 @@ export default function ConsolePage() {
       {/* ─────────────────────────────────────────────────────────────── */}
       {/*  HERO — the swarm graph is the centerpiece of the console      */}
       {/* ─────────────────────────────────────────────────────────────── */}
-      <section className="px-6 sm:px-10 pt-3 pb-8">
+      <section className="px-4 sm:px-6 lg:px-10 pt-3 pb-6 lg:pb-8">
         <motion.div
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
@@ -154,22 +154,22 @@ export default function ConsolePage() {
         >
           {/* Graph: 9/12 columns, full bleed inside a framed plate */}
           <section className="col-span-12 lg:col-span-9 relative">
-            <div className="relative bg-voidDeep border border-ruleGold rounded-sm overflow-hidden h-[65vh] min-h-[520px]">
+            <div className="relative bg-voidDeep border border-ruleGold rounded-sm overflow-hidden h-[58vh] min-h-[380px] sm:min-h-[460px] lg:h-[65vh] lg:min-h-[520px]">
               {/* Top-left section label */}
-              <div className="absolute top-3 left-4 z-10 flex items-baseline gap-2.5 pointer-events-none">
-                <span className="w-1.5 h-1.5 rounded-full bg-gold shadow-[0_0_8px_var(--gold)] translate-y-[-2px]" />
-                <span className="mono text-[10.5px] tracking-[0.22em] uppercase text-gold">
+              <div className="absolute top-3 left-3 sm:left-4 z-10 flex items-baseline gap-2 sm:gap-2.5 pointer-events-none max-w-[55%]">
+                <span className="w-1.5 h-1.5 rounded-full bg-gold shadow-[0_0_8px_var(--gold)] translate-y-[-2px] shrink-0" />
+                <span className="mono text-[10px] sm:text-[10.5px] tracking-[0.22em] uppercase text-gold">
                   Live swarm
                 </span>
-                <span className="mono text-[10px] tracking-[0.18em] uppercase text-starMute">
+                <span className="mono text-[10px] tracking-[0.18em] uppercase text-starMute hidden md:inline">
                   tools → agents → tasks
                 </span>
               </div>
 
               {/* Top-right action */}
-              <div className="absolute top-2.5 right-3 z-10 flex items-center gap-2">
+              <div className="absolute top-2.5 right-2.5 sm:right-3 z-10 flex items-center gap-2">
                 <span
-                  className={`mono text-[10px] tracking-[0.18em] uppercase ${
+                  className={`mono text-[10px] tracking-[0.18em] uppercase hidden sm:inline ${
                     connected ? "text-leaf" : "text-starMute"
                   }`}
                 >
@@ -191,7 +191,7 @@ export default function ConsolePage() {
               <span aria-hidden className="absolute bottom-2 right-2 w-3 h-3 border-r border-b border-gold/70 z-0" />
 
               {/* Bottom-left legend */}
-              <div className="absolute bottom-3 left-4 z-10 flex items-center gap-4 mono text-[10px] tracking-[0.16em] uppercase text-starMute">
+              <div className="absolute bottom-3 left-3 sm:left-4 z-10 flex items-center gap-3 sm:gap-4 mono text-[9.5px] sm:text-[10px] tracking-[0.16em] uppercase text-starMute pointer-events-none">
                 <span className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-gold shadow-[0_0_5px_var(--gold)]" />
                   busy
@@ -200,11 +200,11 @@ export default function ConsolePage() {
                   <span className="w-1.5 h-1.5 rounded-full bg-leaf shadow-[0_0_5px_var(--leaf)]" />
                   idle
                 </span>
-                <span className="flex items-center gap-1.5">
+                <span className="hidden sm:flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-azure shadow-[0_0_5px_var(--azure)]" />
                   routed
                 </span>
-                <span className="flex items-center gap-1.5">
+                <span className="hidden sm:flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-rose shadow-[0_0_5px_var(--rose)]" />
                   failed
                 </span>
@@ -216,7 +216,7 @@ export default function ConsolePage() {
 
           {/* Live event rail: 3/12 columns, matching graph height */}
           <aside className="col-span-12 lg:col-span-3 relative">
-            <div className="bg-abyss/60 border border-ruleGold rounded-sm h-[65vh] min-h-[520px] flex flex-col overflow-hidden">
+            <div className="bg-abyss/60 border border-ruleGold rounded-sm h-[34vh] min-h-[260px] lg:h-[65vh] lg:min-h-[520px] flex flex-col overflow-hidden">
               <div className="px-4 pt-3 pb-2 border-b border-ruleGold/60 flex items-baseline justify-between">
                 <span className="flex items-baseline gap-2.5">
                   <span className="mono text-[10.5px] tracking-[0.22em] uppercase text-gold">
@@ -242,7 +242,7 @@ export default function ConsolePage() {
       </section>
 
       {/* ── Operations row ────────────────────────────────────────── */}
-      <section className="px-6 sm:px-10 pb-8">
+      <section className="px-4 sm:px-6 lg:px-10 pb-8">
         <div className="flex items-baseline justify-between gap-3 mb-4">
           <span className="mono text-[10.5px] tracking-[0.22em] uppercase text-starMute">
             Operations
@@ -250,7 +250,7 @@ export default function ConsolePage() {
           <span className="hairline flex-1 max-w-[60%] h-px self-center" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
           <section className="panel-soft p-5">
             <SectionHead title="New task" />
             <CreateTaskForm />
@@ -305,7 +305,7 @@ export default function ConsolePage() {
       </section>
 
       {/* ── Recent strip ──────────────────────────────────────────── */}
-      <section className="px-6 sm:px-10 pb-12">
+      <section className="px-4 sm:px-6 lg:px-10 pb-12">
         <div className="flex items-baseline justify-between gap-3 mb-4">
           <span className="mono text-[10.5px] tracking-[0.22em] uppercase text-starMute">
             Recent
@@ -335,7 +335,7 @@ export default function ConsolePage() {
         )}
       </section>
 
-      <footer className="px-6 sm:px-10 py-5 border-t border-ruleGold mt-auto">
+      <footer className="px-4 sm:px-6 lg:px-10 py-5 border-t border-ruleGold mt-auto">
         <div className="flex items-center justify-between gap-2 mono text-[10.5px] tracking-[0.18em] uppercase text-starMute">
           <span>Octo·Swarm</span>
           <span>simulated · v0.1</span>
