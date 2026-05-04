@@ -127,7 +127,7 @@ export default function CreateTaskForm() {
             );
           })}
         </div>
-        <p className="mt-1.5 text-[11.5px] text-starMute italic display-italic">
+        <p className="mt-1.5 text-[11.5px] text-starMute display">
           The router pairs by skill match.
         </p>
       </div>
@@ -136,7 +136,7 @@ export default function CreateTaskForm() {
         <motion.div
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-[12px] text-rose italic display-italic"
+          className="text-[12px] text-rose display"
         >
           ✕ {err}
         </motion.div>

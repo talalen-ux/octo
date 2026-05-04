@@ -66,7 +66,7 @@ export default function AgentCard({
 
       <div className="flex items-baseline justify-between gap-2">
         <h4
-          className="display-italic truncate"
+          className="display truncate"
           style={{ fontSize: 18, color: "var(--star)" }}
         >
           {agent.name}
@@ -77,7 +77,7 @@ export default function AgentCard({
       </div>
 
       <div className="mt-0.5 flex items-baseline gap-2 text-[12px] text-starSoft">
-        <span className="italic display-italic" title={agentTypeBlurb[agent.type]}>
+        <span className="display" title={agentTypeBlurb[agent.type]}>
           {agentTypeLabel[agent.type]}
         </span>
         <span className="text-starFaint">·</span>
@@ -130,7 +130,7 @@ export default function AgentCard({
           <span className="mono text-[9.5px] tracking-[0.18em] text-gold mr-2">
             now
           </span>
-          <span className="italic display-italic">{current.title}</span>
+          <span className="display">{current.title}</span>
         </motion.div>
       )}
     </motion.article>

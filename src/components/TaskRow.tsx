@@ -74,7 +74,7 @@ export default function TaskRow({
       <div>
         <div className="flex items-baseline justify-between gap-2">
           <h4
-            className="display-italic"
+            className="display"
             style={{
               fontSize: 16.5,
               lineHeight: 1.2,
@@ -95,10 +95,10 @@ export default function TaskRow({
                 <span className="mono text-[9.5px] tracking-[0.18em] text-starMute mr-1">
                   by
                 </span>
-                <span className="italic display-italic">{agent.name}</span>
+                <span className="display">{agent.name}</span>
               </>
             ) : (
-              <span className="text-starMute italic display-italic">
+              <span className="text-starMute display">
                 awaiting a free hand…
               </span>
             )}
@@ -137,7 +137,7 @@ export default function TaskRow({
               task.status === "failed"
                 ? "border-rose text-rose/90"
                 : "border-leaf text-star"
-            } text-[12.5px] italic leading-snug display-italic`}
+            } text-[12.5px] leading-snug display`}
           >
             {summarizeResult(task.result)}
           </blockquote>

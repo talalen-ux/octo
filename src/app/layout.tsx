@@ -5,16 +5,14 @@ import "./globals.css";
 const newsreader = Newsreader({
   subsets: ["latin"],
   variable: "--font-display",
-  weight: ["300", "400", "500", "600", "700"],
-  style: ["normal", "italic"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
 const plex = IBM_Plex_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
-  weight: ["300", "400", "500", "600"],
-  style: ["normal", "italic"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -22,14 +20,13 @@ const plexMono = IBM_Plex_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
   weight: ["300", "400", "500", "600"],
-  style: ["normal", "italic"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Octo·Swarm — Atlas of Octans",
+  title: "Octo·Swarm — autonomous agent fleet",
   description:
-    "A celestial atlas for an autonomous agent fleet. Tasks dispatched, picked up, and completed in real time.",
+    "A live console for an autonomous agent fleet. Submit tasks, watch the right agent pick them up, and see results land on the wire in real time.",
 };
 
 export default function RootLayout({

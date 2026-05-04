@@ -130,24 +130,24 @@ main {
 /* ---- Component layer ----------------------------------------------------- */
 
 @layer components {
-  /* Display = Newsreader, italics where it counts */
+  /* Display = Newsreader, bold, no italics */
   .display {
     font-family: var(--font-display), "Newsreader", Georgia, serif;
-    font-weight: 400;
-    letter-spacing: -0.005em;
+    font-weight: 700;
+    letter-spacing: -0.012em;
     color: var(--star);
-    font-feature-settings: "kern", "liga", "onum";
+    font-feature-settings: "kern", "liga";
   }
   .display-italic {
     font-family: var(--font-display), "Newsreader", Georgia, serif;
-    font-style: italic;
-    font-weight: 400;
-    letter-spacing: -0.005em;
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: -0.012em;
     color: var(--star);
   }
   .display-soft {
     font-family: var(--font-display), "Newsreader", Georgia, serif;
-    font-weight: 400;
+    font-weight: 600;
     color: var(--star-soft);
   }
 
@@ -214,7 +214,6 @@ main {
   }
   .field::placeholder {
     color: var(--star-mute);
-    font-style: italic;
   }
 
   /* Primary action — like an engraved brass plate */
@@ -336,8 +335,8 @@ main {
   }
 
   .marker {
-    font-family: var(--font-display);
-    font-style: italic;
+    font-family: var(--font-mono);
+    font-weight: 600;
     color: var(--gold);
   }
 

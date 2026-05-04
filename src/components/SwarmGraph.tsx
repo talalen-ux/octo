@@ -76,7 +76,7 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
   const xTask = colW * 2;
   const yTop = 70;
 
-  // Column heads — Roman numeral + italic title
+  // Column heads — Roman numeral + bold title
   const heads = [
     { x: xTool, label: "Instruments", num: "I" },
     { x: xAgent, label: "Hands", num: "II" },
@@ -94,7 +94,6 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
             <div
               style={{
                 fontFamily: "var(--font-display)",
-                fontStyle: "italic",
                 fontSize: 28,
                 color: GOLD,
                 lineHeight: 1,
@@ -106,7 +105,6 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
             <div
               style={{
                 fontFamily: "var(--font-display)",
-                fontStyle: "italic",
                 fontSize: 16,
                 color: STAR,
                 marginTop: 4,
@@ -164,7 +162,6 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
             <div
               style={{
                 fontFamily: "var(--font-display)",
-                fontStyle: "italic",
                 fontSize: 17,
                 color: STAR,
                 marginTop: 4,
@@ -240,7 +237,6 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
             <div
               style={{
                 fontFamily: "var(--font-display)",
-                fontStyle: "italic",
                 fontSize: 19,
                 color: STAR,
                 marginTop: 4,
@@ -319,7 +315,6 @@ function arrange(snap: Snapshot): { nodes: Node[]; edges: Edge[] } {
             <div
               style={{
                 fontFamily: "var(--font-display)",
-                fontStyle: "italic",
                 fontSize: 15.5,
                 color: STAR,
                 marginTop: 4,

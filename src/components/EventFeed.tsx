@@ -65,7 +65,7 @@ export default function EventFeed({ events }: { events: SwarmEvent[] }) {
         })}
       </AnimatePresence>
       {events.length === 0 && (
-        <div className="text-[12.5px] text-starMute italic display-italic py-3">
+        <div className="text-[12.5px] text-starMute display py-3">
           The wire is quiet. Lodge an order to begin transmission.
         </div>
       )}

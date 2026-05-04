@@ -76,7 +76,7 @@ export default function CreateAgentForm() {
                 type="button"
                 key={t}
                 onClick={() => setType(t)}
-                className="display-italic px-2 py-2 text-[13px] transition-all rounded-sm"
+                className="display px-2 py-2 text-[13px] transition-all rounded-sm"
                 style={{
                   border: "1px solid",
                   borderColor: on ? "var(--gold-deep)" : "var(--rule)",
@@ -94,7 +94,7 @@ export default function CreateAgentForm() {
             );
           })}
         </div>
-        <p className="mt-1.5 text-[11.5px] text-starMute italic display-italic">
+        <p className="mt-1.5 text-[11.5px] text-starMute display">
           {agentTypeBlurb[type]}
         </p>
       </div>
@@ -131,7 +131,7 @@ export default function CreateAgentForm() {
         <motion.div
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-[12px] text-rose italic display-italic"
+          className="text-[12px] text-rose display"
         >
           ✕ {err}
         </motion.div>

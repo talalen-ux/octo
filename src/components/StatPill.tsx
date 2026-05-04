@@ -98,7 +98,7 @@ export default function StatPill({
         {isNumber ? <AnimatedNumber value={value as number} /> : value}
       </div>
       {hint && (
-        <div className="mt-2 text-[11.5px] text-starMute italic display-italic leading-snug">
+        <div className="mt-2 text-[11.5px] text-starMute display leading-snug">
           {hint}
         </div>
       )}

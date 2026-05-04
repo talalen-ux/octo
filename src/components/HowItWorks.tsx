@@ -82,7 +82,7 @@ export default function HowItWorks() {
             {/* Numeral badge */}
             <div className="flex items-center gap-3">
               <span
-                className="display-italic relative inline-flex items-center justify-center"
+                className="display relative inline-flex items-center justify-center"
                 style={{
                   width: 38,
                   height: 38,
@@ -101,7 +101,7 @@ export default function HowItWorks() {
             </div>
 
             <h3
-              className="display-italic text-[22px] leading-tight"
+              className="display text-[22px] leading-tight"
               style={{ color: "var(--star)" }}
             >
               {s.title}
