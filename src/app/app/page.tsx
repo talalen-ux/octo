@@ -79,7 +79,7 @@ function SectionHead({
   );
 }
 
-export default function DashboardPage() {
+export default function ConsolePage() {
   const { snapshot, events, connected } = useSwarm();
   const { agents, tasks, stats } = snapshot;
   const [seeding, setSeeding] = useState(false);
@@ -101,7 +101,7 @@ export default function DashboardPage() {
   );
   const filed = tasks
     .filter((t) => t.status === "completed" || t.status === "failed")
-    .slice(0, 6);
+    .slice(0, 8);
 
   const total = agents.length;
   const load = total === 0 ? 0 : Math.round((stats.busy / total) * 100);
@@ -125,98 +125,56 @@ export default function DashboardPage() {
     <main className="min-h-screen flex flex-col">
       <Hero connected={connected} />
 
-      {/* Metrics row */}
-      <section className="px-6 sm:px-10 pt-6 pb-3 border-b border-ruleGold">
-        <div className="flex items-baseline justify-between gap-3 mb-4">
-          <span className="mono text-[10.5px] tracking-[0.18em] uppercase text-starMute">
-            Overview
-          </span>
-          <span className="hairline flex-1 max-w-[60%] h-px self-center rule-sweep" />
-        </div>
-
+      {/* ── Overview stats — sits as a thin band above the graph hero ─── */}
+      <section className="px-6 sm:px-10 pt-4 pb-3">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{ duration: 0.5 }}
           className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-px bg-ruleGold border border-ruleGold rounded-[2px] overflow-hidden"
         >
-          <StatPill
-            label="Agents"
-            value={total}
-            tone="ink"
-            hint={`${stats.idle} idle · ${stats.busy} busy`}
-          />
-          <StatPill
-            label="Busy"
-            value={stats.busy}
-            tone="stamp"
-            hint="agents currently engaged"
-          />
-          <StatPill
-            label="Queued"
-            value={stats.queued}
-            tone="ink"
-            hint="tasks awaiting routing"
-          />
-          <StatPill
-            label="Running"
-            value={stats.inProgress}
-            tone="deep"
-            hint="tasks in progress"
-          />
-          <StatPill
-            label="Done"
-            value={stats.completed}
-            tone="sage"
-            hint="tasks delivered to date"
-          />
-          <StatPill
-            label="Load"
-            value={`${load}%`}
-            tone="gold"
-            hint="share of fleet engaged"
-          />
+          <StatPill label="Agents" value={total} tone="ink" hint={`${stats.idle} idle · ${stats.busy} busy`} />
+          <StatPill label="Busy" value={stats.busy} tone="stamp" hint="agents currently engaged" />
+          <StatPill label="Queued" value={stats.queued} tone="ink" hint="tasks awaiting routing" />
+          <StatPill label="Running" value={stats.inProgress} tone="deep" hint="tasks in progress" />
+          <StatPill label="Done" value={stats.completed} tone="sage" hint="tasks delivered to date" />
+          <StatPill label="Load" value={`${load}%`} tone="gold" hint="share of fleet engaged" />
         </motion.div>
       </section>
 
-      {/* Main grid */}
-      <section className="grid grid-cols-12 gap-x-7 gap-y-7 px-6 sm:px-10 py-7">
-        {/* Left column */}
-        <aside className="col-span-12 lg:col-span-3 flex flex-col gap-7">
-          <section className="panel-soft p-5">
-            <SectionHead title="New agent" />
-            <CreateAgentForm />
-          </section>
+      {/* ─────────────────────────────────────────────────────────────── */}
+      {/*  HERO — the swarm graph is the centerpiece of the console      */}
+      {/* ─────────────────────────────────────────────────────────────── */}
+      <section className="px-6 sm:px-10 pt-3 pb-8">
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: [0.2, 0.7, 0.2, 1] }}
+          className="grid grid-cols-12 gap-3"
+        >
+          {/* Graph: 9/12 columns, full bleed inside a framed plate */}
+          <section className="col-span-12 lg:col-span-9 relative">
+            <div className="relative bg-voidDeep border border-ruleGold rounded-sm overflow-hidden h-[65vh] min-h-[520px]">
+              {/* Top-left section label */}
+              <div className="absolute top-3 left-4 z-10 flex items-baseline gap-2.5 pointer-events-none">
+                <span className="w-1.5 h-1.5 rounded-full bg-gold shadow-[0_0_8px_var(--gold)] translate-y-[-2px]" />
+                <span className="mono text-[10.5px] tracking-[0.22em] uppercase text-gold">
+                  Live swarm
+                </span>
+                <span className="mono text-[10px] tracking-[0.18em] uppercase text-starMute">
+                  tools → agents → tasks
+                </span>
+              </div>
 
-          <section>
-            <SectionHead title="Fleet" count={total} />
-            <div className="flex flex-col rounded-sm border border-ruleGold max-h-[58vh] overflow-y-auto bg-abyss/40">
-              <AnimatePresence initial={false}>
-                {agents.map((a) => (
-                  <AgentCard
-                    key={a.id}
-                    agent={a}
-                    current={
-                      a.currentTaskId ? taskMap.get(a.currentTaskId) : null
-                    }
-                  />
-                ))}
-              </AnimatePresence>
-              {agents.length === 0 && (
-                <div className="text-[13px] text-starMute py-7 text-center">
-                  No agents yet. Add one above.
-                </div>
-              )}
-            </div>
-          </section>
-        </aside>
-
-        {/* Center — Graph + Events */}
-        <section className="col-span-12 lg:col-span-6 flex flex-col gap-7">
-          <section className="panel p-5 min-h-[460px] flex flex-col">
-            <SectionHead
-              title="Swarm graph"
-              action={
+              {/* Top-right action */}
+              <div className="absolute top-2.5 right-3 z-10 flex items-center gap-2">
+                <span
+                  className={`mono text-[10px] tracking-[0.18em] uppercase ${
+                    connected ? "text-leaf" : "text-starMute"
+                  }`}
+                >
+                  {connected ? "● live" : "○ offline"}
+                </span>
                 <button
                   onClick={runDemo}
                   disabled={seeding}
@@ -224,46 +182,89 @@ export default function DashboardPage() {
                 >
                   {seeding ? "Seeding…" : "Run demo"}
                 </button>
-              }
-            />
-            <div className="flex-1 min-h-[400px] border border-ruleGold rounded-sm relative overflow-hidden bg-voidDeep">
+              </div>
+
+              {/* Corner reticles */}
+              <span aria-hidden className="absolute top-2 left-2 w-3 h-3 border-l border-t border-gold/70 z-0" />
+              <span aria-hidden className="absolute top-2 right-2 w-3 h-3 border-r border-t border-gold/70 z-0" />
+              <span aria-hidden className="absolute bottom-2 left-2 w-3 h-3 border-l border-b border-gold/70 z-0" />
+              <span aria-hidden className="absolute bottom-2 right-2 w-3 h-3 border-r border-b border-gold/70 z-0" />
+
+              {/* Bottom-left legend */}
+              <div className="absolute bottom-3 left-4 z-10 flex items-center gap-4 mono text-[10px] tracking-[0.16em] uppercase text-starMute">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gold shadow-[0_0_5px_var(--gold)]" />
+                  busy
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-leaf shadow-[0_0_5px_var(--leaf)]" />
+                  idle
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-azure shadow-[0_0_5px_var(--azure)]" />
+                  routed
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-rose shadow-[0_0_5px_var(--rose)]" />
+                  failed
+                </span>
+              </div>
+
               <SwarmGraph snapshot={snapshot} />
-              <span aria-hidden className="absolute top-2 left-2 w-3 h-3 border-l border-t border-goldDeep/70" />
-              <span aria-hidden className="absolute top-2 right-2 w-3 h-3 border-r border-t border-goldDeep/70" />
-              <span aria-hidden className="absolute bottom-2 left-2 w-3 h-3 border-l border-b border-goldDeep/70" />
-              <span aria-hidden className="absolute bottom-2 right-2 w-3 h-3 border-r border-b border-goldDeep/70" />
-            </div>
-            <p className="mt-3 text-[12px] text-starMute">
-              Tools (left) → agents (center) → tasks (right).
-            </p>
-          </section>
-
-          <section className="panel-soft p-5">
-            <SectionHead title="Event log" count={events.length} />
-            <div className="border-t border-ruleGold pt-2 max-h-44 overflow-y-auto">
-              <EventFeed events={events} />
             </div>
           </section>
-        </section>
 
-        {/* Right column */}
-        <aside className="col-span-12 lg:col-span-3 flex flex-col gap-7">
+          {/* Live event rail: 3/12 columns, matching graph height */}
+          <aside className="col-span-12 lg:col-span-3 relative">
+            <div className="bg-abyss/60 border border-ruleGold rounded-sm h-[65vh] min-h-[520px] flex flex-col overflow-hidden">
+              <div className="px-4 pt-3 pb-2 border-b border-ruleGold/60 flex items-baseline justify-between">
+                <span className="flex items-baseline gap-2.5">
+                  <span className="mono text-[10.5px] tracking-[0.22em] uppercase text-gold">
+                    Wire
+                  </span>
+                  <span className="mono text-[10px] tracking-[0.18em] uppercase text-starMute">
+                    live event log
+                  </span>
+                </span>
+                <span
+                  className="mono text-[10px] tracking-[0.18em] text-starMute"
+                  style={{ fontVariantNumeric: "tabular-nums" }}
+                >
+                  {events.length}
+                </span>
+              </div>
+              <div className="flex-1 overflow-y-auto px-3 py-2">
+                <EventFeed events={events} />
+              </div>
+            </div>
+          </aside>
+        </motion.div>
+      </section>
+
+      {/* ── Operations row ────────────────────────────────────────── */}
+      <section className="px-6 sm:px-10 pb-8">
+        <div className="flex items-baseline justify-between gap-3 mb-4">
+          <span className="mono text-[10.5px] tracking-[0.22em] uppercase text-starMute">
+            Operations
+          </span>
+          <span className="hairline flex-1 max-w-[60%] h-px self-center" />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           <section className="panel-soft p-5">
             <SectionHead title="New task" />
             <CreateTaskForm />
           </section>
 
-          <section>
+          <section className="panel-soft p-5">
             <SectionHead title="Active" count={active.length} />
-            <div className="max-h-[42vh] overflow-y-auto pr-1 -mr-1">
+            <div className="max-h-[44vh] overflow-y-auto pr-1 -mr-1">
               <AnimatePresence initial={false}>
                 {active.map((t, i) => (
                   <TaskRow
                     key={t.id}
                     task={t}
-                    agent={
-                      t.assignedAgent ? agentMap.get(t.assignedAgent) : null
-                    }
+                    agent={t.assignedAgent ? agentMap.get(t.assignedAgent) : null}
                     index={i}
                   />
                 ))}
@@ -276,29 +277,62 @@ export default function DashboardPage() {
             </div>
           </section>
 
-          <section>
-            <SectionHead title="Recent" count={filed.length} />
-            <div className="max-h-72 overflow-y-auto pr-1 -mr-1">
+          <section className="panel-soft p-5">
+            <SectionHead title="Fleet" count={total} />
+            <div className="flex flex-col rounded-sm border border-rule max-h-[44vh] overflow-y-auto bg-voidDeep/40">
               <AnimatePresence initial={false}>
-                {filed.map((t, i) => (
-                  <TaskRow
-                    key={t.id}
-                    task={t}
-                    agent={
-                      t.assignedAgent ? agentMap.get(t.assignedAgent) : null
-                    }
-                    index={i}
+                {agents.map((a) => (
+                  <AgentCard
+                    key={a.id}
+                    agent={a}
+                    current={a.currentTaskId ? taskMap.get(a.currentTaskId) : null}
                   />
                 ))}
               </AnimatePresence>
-              {filed.length === 0 && (
-                <div className="text-[13px] text-starMute py-5 text-center">
-                  Nothing completed yet.
+              {agents.length === 0 && (
+                <div className="text-[13px] text-starMute py-7 text-center">
+                  No agents yet.
                 </div>
               )}
             </div>
           </section>
-        </aside>
+
+          <section className="panel-soft p-5">
+            <SectionHead title="New agent" />
+            <CreateAgentForm />
+          </section>
+        </div>
+      </section>
+
+      {/* ── Recent strip ──────────────────────────────────────────── */}
+      <section className="px-6 sm:px-10 pb-12">
+        <div className="flex items-baseline justify-between gap-3 mb-4">
+          <span className="mono text-[10.5px] tracking-[0.22em] uppercase text-starMute">
+            Recent
+          </span>
+          <span className="mono text-[10px] tracking-[0.18em] text-starMute">
+            {filed.length} archived
+          </span>
+        </div>
+
+        {filed.length === 0 ? (
+          <div className="border border-rule rounded-sm py-10 text-center text-[13px] text-starMute bg-abyss/40">
+            Nothing completed yet. Run the demo or submit a task above.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+            <AnimatePresence initial={false}>
+              {filed.map((t, i) => (
+                <TaskRow
+                  key={t.id}
+                  task={t}
+                  agent={t.assignedAgent ? agentMap.get(t.assignedAgent) : null}
+                  index={i}
+                />
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
       </section>
 
       <footer className="px-6 sm:px-10 py-5 border-t border-ruleGold mt-auto">
