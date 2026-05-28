@@ -1,8 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { Suspense } from "react";
 import { motion } from "framer-motion";
+import Spline from "@splinetool/react-spline/next";
 import CodeOctopus from "@/components/CodeOctopus";
+
+const SPLINE_SCENE =
+  "https://prod.spline.design/jrZIOcTGakj2TegE/scene.splinecode";
 
 const FEATURES = [
   {
@@ -172,14 +177,20 @@ export default function LandingPage() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="col-span-12 lg:col-span-5 flex justify-center lg:justify-end"
           >
-            <figure className="relative w-[min(92vw,420px)] aspect-[6/5]">
-              <div className="absolute inset-0 border border-ruleGold rounded-sm pointer-events-none" />
-              <div className="absolute inset-2 border border-rule pointer-events-none" />
-              <span aria-hidden className="absolute top-1.5 left-1.5 w-3 h-3 border-l border-t border-gold/70" />
-              <span aria-hidden className="absolute top-1.5 right-1.5 w-3 h-3 border-r border-t border-gold/70" />
-              <span aria-hidden className="absolute bottom-1.5 left-1.5 w-3 h-3 border-l border-b border-gold/70" />
-              <span aria-hidden className="absolute bottom-1.5 right-1.5 w-3 h-3 border-r border-b border-gold/70" />
-              <CodeOctopus size={13} haloOpacity={0.22} />
+            <figure className="relative w-[min(92vw,460px)] aspect-square">
+              <div className="absolute inset-0 border border-ruleGold rounded-sm pointer-events-none z-10" />
+              <div className="absolute inset-2 border border-rule pointer-events-none z-10" />
+              <span aria-hidden className="absolute top-1.5 left-1.5 w-3 h-3 border-l border-t border-gold/70 z-10" />
+              <span aria-hidden className="absolute top-1.5 right-1.5 w-3 h-3 border-r border-t border-gold/70 z-10" />
+              <span aria-hidden className="absolute bottom-1.5 left-1.5 w-3 h-3 border-l border-b border-gold/70 z-10" />
+              <span aria-hidden className="absolute bottom-1.5 right-1.5 w-3 h-3 border-r border-b border-gold/70 z-10" />
+              <div className="absolute inset-3 overflow-hidden rounded-[1px]">
+                <Suspense
+                  fallback={<CodeOctopus size={13} haloOpacity={0.22} />}
+                >
+                  <Spline scene={SPLINE_SCENE} />
+                </Suspense>
+              </div>
               <figcaption className="absolute -bottom-6 right-0 mono text-[10px] sm:text-[10.5px] tracking-[0.18em] uppercase text-goldDeep">
                 Pl. I · &lt;/octopus&gt;
               </figcaption>
