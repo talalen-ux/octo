@@ -647,3 +647,113 @@ a,
     stroke-dashoffset: 0 !important;
   }
 }
+
+/* ──────────────────────────────────────────────────────────────────────── */
+/*  AIKOLs landing — scoped under .aikol so the console is untouched        */
+/* ──────────────────────────────────────────────────────────────────────── */
+
+.aikol {
+  font-family: var(--font-grotesk), ui-sans-serif, system-ui, sans-serif;
+  background: #050606;
+  color: #f4f5f1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+}
+.aikol ::selection {
+  background: #c8ff4f;
+  color: #050606;
+}
+
+/* Light sweep across the lime headline line. Runs once shortly after the
+   intro, then idles for most of each cycle so it reads as a glint. */
+.k-glint {
+  background-image: linear-gradient(
+    100deg,
+    #c8ff4f 0%,
+    #c8ff4f 42%,
+    #f4ffd9 50%,
+    #c8ff4f 58%,
+    #c8ff4f 100%
+  );
+  background-size: 300% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: k-glint 9s cubic-bezier(0.6, 0, 0.2, 1) 1.9s infinite;
+}
+@keyframes k-glint {
+  0% { background-position: 100% 0; }
+  18%, 100% { background-position: 0% 0; }
+}
+
+/* Film grain to keep the big lime glows from banding on 8-bit panels */
+.k-grain {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.09 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>");
+  background-size: 160px 160px;
+}
+
+/* Scroll cue: a lime tick travelling down a hairline */
+.k-cue {
+  position: relative;
+  overflow: hidden;
+}
+.k-cue::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 40%;
+  background: #c8ff4f;
+  animation: k-cue 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+@keyframes k-cue {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(260%); }
+}
+
+/* Visor scan line on the hero agent */
+.k-scan {
+  animation: k-scan 6.5s cubic-bezier(0.45, 0, 0.25, 1) 2.6s infinite;
+  transform: translateY(-120%);
+}
+@keyframes k-scan {
+  0% { transform: translateY(-120%); opacity: 0; }
+  6% { opacity: 1; }
+  24% { transform: translateY(260%); opacity: 1; }
+  30%, 100% { transform: translateY(260%); opacity: 0; }
+}
+
+/* Live dot pulse */
+.k-pulse::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: inherit;
+  animation: k-pulse 1.8s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+}
+@keyframes k-pulse {
+  from { transform: scale(1); opacity: 0.7; }
+  to { transform: scale(3.2); opacity: 0; }
+}
+
+/* Underline that draws in from the left on hover */
+.k-link {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 100% 100%;
+  background-size: 0% 1px;
+  transition: background-size 0.5s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s;
+}
+.k-link:hover {
+  background-position: 0% 100%;
+  background-size: 100% 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .k-glint { animation: none; background-position: 0% 0; }
+  .k-scan, .k-cue::after, .k-pulse::after { animation: none; display: none; }
+}

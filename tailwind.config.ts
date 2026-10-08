@@ -35,8 +35,22 @@ const config: Config = {
         stampMute: "var(--stamp-mute)",
         deep: "var(--deep)",
         sage: "var(--sage)",
+
+        /* AIKOLs landing palette (from the brand asset pack) */
+        k: {
+          bg: "#050606",
+          panel: "#0A0B0A",
+          ink: "#F4F5F1",
+          mute: "#8B9088",
+          dim: "#50554E",
+          lime: "#C8FF4F",
+          magenta: "#FF35D2",
+          cyan: "#20E5EA",
+          yellow: "#FFD638",
+        },
       },
       fontFamily: {
+        grotesk: ["var(--font-grotesk)", "ui-sans-serif", "system-ui", "sans-serif"],
         sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
         display: ["var(--font-display)", "Newsreader", "Georgia", "serif"],
         serif: ["var(--font-display)", "Newsreader", "Georgia", "serif"],
@@ -55,11 +69,16 @@ const config: Config = {
           "0%": { transform: "scale(0.8)", opacity: "0.7" },
           "100%": { transform: "scale(2.4)", opacity: "0" },
         },
+        "k-marquee": {
+          from: { transform: "translate3d(0,0,0)" },
+          to: { transform: "translate3d(-50%,0,0)" },
+        },
       },
       animation: {
         rise: "rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both",
         twinkle: "twinkle 3.2s ease-in-out infinite",
         ripple: "ripple 1.8s cubic-bezier(0.4,0,0.6,1) infinite",
+        "k-marquee": "k-marquee 56s linear infinite",
       },
     },
   },
